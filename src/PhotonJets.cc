@@ -134,13 +134,13 @@ void PhotonJets::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   //Photons
   edm::Handle<std::vector<pat::Photon> > phoHandle;
   iEvent.getByToken(phoLabel_, phoHandle);
-  auto_ptr<vector<pat::Photon> > phoColl( new vector<pat::Photon> (*phoHandle) );
+  std::unique_ptr<vector<pat::Photon> > phoColl( new vector<pat::Photon> (*phoHandle) );
   
   
   //Packed PF Cands
   edm::Handle<std::vector<pat::PackedCandidate>> pfCnd1Handle;
   iEvent.getByToken(pckPFCdsLabel_,pfCnd1Handle); 
-  auto_ptr<vector<pat::PackedCandidate> > CandColl( new vector<pat::PackedCandidate> (*pfCnd1Handle) );
+  std::unique_ptr<vector<pat::PackedCandidate> > CandColl( new vector<pat::PackedCandidate> (*pfCnd1Handle) );
 
 
   //edm::Handle< edm::View<reco::Candidate>> pfCndHandle;
@@ -154,7 +154,7 @@ void PhotonJets::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   //Jet collection
   edm::Handle<std::vector<pat::Jet> > jetHandle, packedjetHandle;
   iEvent.getByToken(jLabel_, jetHandle);
-  auto_ptr<vector<pat::Jet> > jetColl( new vector<pat::Jet> (*jetHandle) );
+  std::unique_ptr<vector<pat::Jet> > jetColl( new vector<pat::Jet> (*jetHandle) );
 
   edm::Handle< double > rhoH;
   iEvent.getByToken(rhoLabel_,rhoH);
@@ -305,7 +305,7 @@ void PhotonJets::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	   }
 	}
 	
-	if(subj1.Pt() > 0 && subj2.Pt() > 0 && subj3.Pt() > 0  ){
+	if(subj1.Pt() > 10 && subj2.Pt() > 10 && subj3.Pt() > 10  ){
 	  for(size_t ipho = 0; ipho < (*phoColl).size();ipho++){
 	    pat::Photon & pho = (*phoColl)[ipho];
 	    double pho_pt  = pho.pt(); 
@@ -586,19 +586,24 @@ void PhotonJets::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 	if(sbja > sbjb && sbja > sbjc) {
 	  photon_subjet_frac = sbja;
-	  subindx = 1; 
+	  if(suba.pt() > subc.pt()  )   subindx = 1; 
+	  if(suba.pt() < subc.pt()  )   subindx = 2; 
 	  phoindx = pho_s1; 
 	}
 
 	if(sbjb > sbja && sbjb > sbjc) {
 	  photon_subjet_frac = sbjb;
-	  subindx = 2; 
+	  if(subb.pt() > subc.pt()  )   subindx = 2; 
+	  if(suba.pt() < subc.pt()  )   subindx = 3; 
+	  if(subb.pt() < subc.pt()  )     subindx = 3;  
 	  phoindx = pho_s2; 
  	}
 
 	if(sbjc > sbja && sbjc > sbjb) {
 	  photon_subjet_frac = sbjc;
-	  subindx = 3; 
+	  if(subb.pt() > subc.pt()  )   subindx = 3; 
+	  if(suba.pt() < subc.pt()  )   subindx = 1; 
+	  if(subb.pt() < subc.pt() && suba.pt() > subc.pt() ) subindx = 2; 
 	  phoindx = pho_s3; 
 	}
 	  
@@ -625,7 +630,7 @@ void PhotonJets::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     jett.addUserFloat("SubEne2",sen2);
   
   }//EOF loop over jets
-  iEvent.put( jetColl );
+  iEvent.put( std::move(jetColl) );
 
 }
 

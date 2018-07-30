@@ -4,28 +4,12 @@ header = """
 ###    The globalTag is automatically chosen according to the input 'DataProcessing' value. 
 ###    However it can be explictily specified to override the default option.
 ###    Remember that the value of 'DataProcessing' is not set by default. The user has the choice of
-###        'Data_80X_Run2016H_03Feb2017', 
-###        'Data_80X_Run2016BCD_03Feb2017', 
-###        'Data_80X_Run2016EF_03Feb2017', 
-###        'Data_80X_Run2016G_03Feb2017', 
-###        'MC_MiniAODv2_80X_Summer16', 
-###        'MC_MiniAODv2_80X_FastSim'
+###        'Data_94X', 'MC_Fall17MiniAOD' 
 ###
 ### Examples: 
 ###
-###    Running on 25 ns data in 80x 03Feb2017 (Run2016H):
-###        cmsRun b2gedmntuples_cfg.py maxEvents=1000 DataProcessing='Data_80X_Run2016H_03Feb2017'
-###    Running on 25 ns data in 80x 03Feb2017 ReReco (Run2016BCD):
-###        cmsRun b2gedmntuples_cfg.py maxEvents=1000 DataProcessing='Data_80X_Run2016BCD_03Feb2017'
-###    Running on 25 ns data in 80x 03Feb2017 ReReco (Run2016EF):
-###        cmsRun b2gedmntuples_cfg.py maxEvents=1000 DataProcessing='Data_80X_Run2016EF_03Feb2017'
-###    Running on 25 ns data in 80x 03Feb2017 ReReco (Run2016G):
-###        cmsRun b2gedmntuples_cfg.py maxEvents=1000 DataProcessing='Data_80X_Run2016G_03Feb2017'
-### 
-###    Running on 25 ns MC Sumemer16 in 80x:
-###        cmsRun b2gedmntuples_cfg.py maxEvents=1000 DataProcessing='MC_MiniAODv2_80X_Summer16'
-###    Running on 25 ns FastSim MC in 80x:
-###        cmsRun b2gedmntuples_cfg.py maxEvents=1000 DataProcessing='MC_MiniAODv2_80X_FastSim'
+###    Running on 25 ns data in 92X PromptReco
+###        cmsRun b2gedmntuples_cfg.py maxEvents=1000 DataProcessing='Data_92X_Run2017B'
 ###
 ### **** If you are running a test, locally, add the option runCRAB=False at the end. ****
 ###
@@ -41,9 +25,7 @@ import copy
 options = opts.VarParsing ('analysis')
 
 options.register('sample',
-     #'/store/mc/RunIISummer16MiniAODv2/BulkGravTohhTohbbhbb_narrow_M-1000_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/289B3CE4-89B8-E611-89BF-D8D385AE8B08.root',
-     #'/store/data/Run2016H/JetHT/MINIAOD/03Feb2017_ver2-v1/80000/74D27915-1AEB-E611-A0B3-001E67E6F8AA.root',
-     '/store/data/Run2016C/JetHT/MINIAOD/03Feb2017-v1/110000/86F82CD1-C7EB-E611-ACD3-008CFA110B08.root',
+     '/store/mc/RunIIFall17MiniAOD/QCD_HT500to700_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/20000/00108AFB-75FB-E711-A917-0025905B85A0.root',
      opts.VarParsing.multiplicity.singleton,
      opts.VarParsing.varType.string,
      'Sample to analyze')
@@ -59,12 +41,7 @@ options.register('DataProcessing',
     opts.VarParsing.multiplicity.singleton,
     opts.VarParsing.varType.string,
     'Data processing types. Options are:\
-        Data_80X_Run2016BCD_03Feb2017, \
-        Data_80X_Run2016EF_03Feb2017, \
-        Data_80X_Run2016G_03Feb2017, \
-        Data_80X_Run2016H_03Feb2017, \
-        MC_MiniAODv2_80X_Summer16, \
-        MC_MiniAODv2_80X_FastSim'
+        Data_92X_Run2017B'
     )
 
 ### Expert options, do not change.
@@ -75,7 +52,7 @@ options.register('useNoHFMET',
     'Adding met without HF and relative jets')
 
 options.register('usePrivateSQLite',
-    True,
+    False,
     opts.VarParsing.multiplicity.singleton,
     opts.VarParsing.varType.bool,
     'Take Jet Energy Corrections from private SQL file')
@@ -123,33 +100,19 @@ options.setDefault('maxEvents', 100)
 options.parseArguments()
 
 if options.DataProcessing == "":
-  sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: Data_80X, MC_MiniAODv2_80X, MC_MiniAODv2_80X_reHLT or MC_MiniAODv2_80X_FastSim.\n")
+  sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: Data_94X and MC_Fall17MiniAOD.\n")
 
 
 if options.globalTag != "": 
   print "!!!!WARNING: You have chosen globalTag as", options.globalTag, ". Please check if this corresponds to your dataset."
 else: 
-  if options.DataProcessing=="Data_80X_Run2016H_03Feb2017":
-    options.globalTag="80X_dataRun2_Prompt_v16"
-  elif options.DataProcessing in [
-        'Data_80X_Run2016BCD_03Feb2017', 
-        'Data_80X_Run2016EF_03Feb2017', 
-        'Data_80X_Run2016G_03Feb2017', 
-      ]:
-    options.globalTag="80X_dataRun2_2016SeptRepro_v7"    
-  elif options.DataProcessing=="MC_MiniAODv2_80X_Summer16":
-    options.globalTag="80X_mcRun2_asymptotic_2016_TrancheIV_v8"
-  elif options.DataProcessing=="MC_MiniAODv2_80X_FastSim":
-    options.globalTag="80X_mcRun2_asymptotic_2016_miniAODv2_v1"
-    options.usePrivateSQLite = True
+  if options.DataProcessing=="Data_94x":
+    options.globalTag="94X_dataRun2_v6"
+  elif options.DataProcessing=="MC_Fall17MiniAOD": ### to test relVal
+    options.globalTag="94X_mc2017_realistic_v14"
   else:
     sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: \
-      'Data_80X_Run2016H_03Feb2017', \
-      'Data_80X_Run2016BCD_03Feb2017', \
-      'Data_80X_Run2016EF_03Feb2017', \
-      'Data_80X_Run2016G_03Feb2017', \
-      'MC_MiniAODv2_80X_Summer16', \
-      'MC_MiniAODv2_80X_FastSim' \
+      'Data_94X', 'MC_Fall17MiniAOD' \
       .\n")
 
 ###inputTag labels
@@ -222,35 +185,7 @@ if ("Data" in options.DataProcessing and options.forceResiduals): corrections.ex
 
 ### External JEC =====================================================================================================
 if options.usePrivateSQLite:
-    if options.DataProcessing=="Data_80X_Run2016H_03Feb2017":
-      jec_era = "Summer16_23Sep2016AllV4_DATA" 
-      iovStart = 280919
-      iovEnd   = 999999  #284044
-    elif options.DataProcessing=="Data_80X_Run2016BCD_03Feb2017":
-      jec_era = "Summer16_23Sep2016AllV4_DATA" 
-      iovStart = 1
-      iovEnd   = 276811 
-    elif options.DataProcessing=="Data_80X_Run2016EF_03Feb2017":
-      jec_era = "Summer16_23Sep2016AllV4_DATA" 
-      iovStart = 276831
-      iovEnd   = 278801
-    elif options.DataProcessing=="Data_80X_Run2016G_03Feb2017":
-      jec_era = "Summer16_23Sep2016AllV4_DATA" 
-      iovStart = 278802
-      iovEnd   = 280385
-    elif options.DataProcessing=="MC_MiniAODv2_80X_Summer16":
-      jec_era = "Summer16_23Sep2016V4_MC" 
-    elif options.DataProcessing=="MC_MiniAODv2_80X_FastSim":
-      jec_era = "Spring16_25nsFastSimMC_V1" 
-    else: 
-      sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: \
-        'Data_80X_Run2016H_03Feb2017', \
-        'Data_80X_Run2016BCD_03Feb2017', \
-        'Data_80X_Run2016EF_03Feb2017', \
-        'Data_80X_Run2016G_03Feb2017', \
-        'MC_MiniAODv2_80X_Summer16', \
-        'MC_MiniAODv2_80X_FastSim' \
-        .\n")
+    sys.exit("!!!!ERROR:No JECs for 2017 data yet. Stay tuned.\n")
     
     # JEC
     process.load("CondCore.CondDB.CondDB_cfi")
@@ -305,30 +240,6 @@ if options.usePrivateSQLite:
                                )
     process.es_prefer_jec = cms.ESPrefer("PoolDBESSource",'jec')
     
-    ###>>>''' 
-    ###>>>process.load("PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff")
-    ###>>>from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import patJetCorrFactorsUpdated, patJetsUpdated
-    ###>>>process.patJetCorrFactorsReapplyJEC = patJetCorrFactorsUpdated.clone(
-    ###>>>    rho = cms.InputTag("fixedGridRhoFastjetAll"),
-    ###>>>    src = cms.InputTag("slimmedJets"),
-
-    ###>>>    levels = corrections )
-    ###>>>process.updatedPatJetsAK4 = patJetsUpdated.clone(
-    ###>>>    jetSource = cms.InputTag("slimmedJets"),
-    ###>>>    jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
-    ###>>>    )
-    ###>>>process.patJetAK8CorrFactorsReapplyJEC = patJetCorrFactorsUpdated.clone(
-    ###>>>    src = cms.InputTag("slimmedJetsAK8"),
-    ###>>>    rho = cms.InputTag("fixedGridRhoFastjetAll"),
-    ###>>>    levels = corrections )
-
-    ###>>>process.updatedPatJetsAK8 = patJetsUpdated.clone(
-    ###>>>  jetSource = cms.InputTag("slimmedJetsAK8"),
-    ###>>>  jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetAK8CorrFactorsReapplyJEC"))
-    ###>>>  )
-    ###>>>'''
-
-    ### =====================================================================================================
 
 ### External JER =====================================================================================================
 if "Data" in options.DataProcessing:
@@ -824,7 +735,7 @@ process.photonJetsUserData = cms.EDProducer(
 
 process.boostedJetUserDataAK8 = cms.EDProducer(
     'BoostedJetToolboxUserData',
-    jetLabel  = cms.InputTag('jetUserDataAK8'),
+    jetLabel  = cms.InputTag('photonJetsUserData'),
     puppiSDjetLabel = cms.InputTag('packedPatJetsAK8PFPuppiSoftDrop'),
     jetWithSubjetLabel = cms.InputTag('selectedPatJetsAK8PFCHSSoftDropPacked'),
     distMax = cms.double(0.8)
@@ -966,9 +877,10 @@ process.eventShapePFVars.src = cms.InputTag(particleFlowLabel)
 process.eventShapePFJetVars = pfEventShapeVars.clone()
 process.eventShapePFJetVars.src = cms.InputTag( jLabel )
 
-process.centrality = cms.EDProducer("CentralityUserData",
-    src = cms.InputTag( jLabel )
-    )                                    
+##### it seems that with the new task module, we need to comment the processs that not run
+#process.centrality = cms.EDProducer("CentralityUserData",
+#    src = cms.InputTag( jLabel )
+#    )                                    
 
 process.TriggerUserData = cms.EDProducer(
     'TriggerUserData',
@@ -1054,19 +966,16 @@ process.filteredPrunedGenParticles = cms.EDProducer(
 )
 
 ### Including ntuplizer 
-process.options.allowUnscheduled = cms.untracked.bool(True)
 process.load("Analysis.B2GAnaFW.b2gedmntuples_cff")
 
 process.edmNtuplesOut = cms.OutputModule(
     "PoolOutputModule",
     fileName = cms.untracked.string('B2GEDMNtuple.root'),
     outputCommands = cms.untracked.vstring(
-    "drop *",
     "keep *_muons_*_*",
     "keep *_vertexInfo_*_*",
     "keep *_electrons_*_*",
     "keep *_photons_*_*",
-    "keep *_photonjets_*_*",
     "keep *_jetsAK4CHS_*_*",
     "keep *_jetsAK8CHS_*_*",
     "keep *_subjetsAK8CHS_*_*",
@@ -1129,4 +1038,9 @@ process.edmNtuplesOut.fileName=options.outputLabel
 
 process.endPath = cms.EndPath(process.edmNtuplesOut)
 
-#open('B2GEntupleFileDump.py','w').write(process.dumpPython())
+process.myTask = cms.Task()
+process.myTask.add(*[getattr(process,prod) for prod in process.producers_()])
+process.myTask.add(*[getattr(process,filt) for filt in process.filters_()])
+process.endpath.associate(process.myTask)
+
+open('B2GEntupleFileDump.py','w').write(process.dumpPython())

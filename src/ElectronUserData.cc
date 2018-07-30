@@ -139,7 +139,7 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
   edm::Handle<std::vector<pat::Electron> > eleHandle;
   iEvent.getByToken(eleLabel_, eleHandle);
   
-  auto_ptr<vector<pat::Electron> > eleColl( new vector<pat::Electron> (*eleHandle) );
+  std::unique_ptr<vector<pat::Electron> > eleColl( new vector<pat::Electron> (*eleHandle) );
 
   //PackedPFCands for Mini-iso
   edm::Handle<pat::PackedCandidateCollection> packedPFCands;
@@ -288,7 +288,7 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     double EA = getEA(el.eta());
     float absiso_EA = pfIso.sumChargedHadronPt + std::max(0.0 , pfIso.sumNeutralHadronEt + pfIso.sumPhotonEt - rho * EA );
     float relIsoWithEA_ = absiso_EA/el.pt();
-    float missHits = el.gsfTrack()->hitPattern().numberOfHits(HitPattern::MISSING_INNER_HITS);
+    float missHits = el.gsfTrack()->hitPattern().numberOfAllHits(HitPattern::MISSING_INNER_HITS);
 
     float ooEmooP_; 
     if( el.ecalEnergy() == 0 ){
@@ -411,7 +411,7 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     el.addUserInt  ("vidMvaHZZcateg", hzz_mva_cat);
   }
 
-  iEvent.put( eleColl );
+  iEvent.put( std::move(eleColl) );
 
 }
 
