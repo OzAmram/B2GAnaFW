@@ -103,23 +103,27 @@ muonVars = (
         tag = cms.untracked.string("MiniIso"),
         quantity = cms.untracked.string("userFloat('miniIso')")
    ),
+   cms.PSet(
+        tag = cms.untracked.string("TrackerIso"),
+        quantity = cms.untracked.string("userFloat('trackerIso')")
+   ),
    # Impact point
    cms.PSet(
         tag = cms.untracked.string("Dxy"),
         quantity = cms.untracked.string("userFloat('dxy')")
    ),
-   # cms.PSet(
-   #      tag = cms.untracked.string("Dxyerr"),
-   #      quantity = cms.untracked.string("userFloat('dxyErr')")
-   # ),
+   cms.PSet(
+        tag = cms.untracked.string("Dxyerr"),
+        quantity = cms.untracked.string("userFloat('dxyErr')")
+    ),
    cms.PSet(
         tag = cms.untracked.string("Dz"),
         quantity = cms.untracked.string("userFloat('dz')")
         ),
-   # cms.PSet(
-   #   tag = cms.untracked.string("Dzerr"),
-   #   quantity = cms.untracked.string("userFloat('dzErr')")
-   #   ),
+    cms.PSet(
+      tag = cms.untracked.string("Dzerr"),
+      quantity = cms.untracked.string("userFloat('dzErr')")
+      ),
    cms.PSet(
         tag = cms.untracked.string("DB"),
         quantity = cms.untracked.string("userFloat('dB')")
@@ -152,6 +156,10 @@ muonVars = (
     cms.PSet(
         tag = cms.untracked.string("IsHighPtMuon"),
         quantity = cms.untracked.string("userFloat('isHighPtMuon')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("IsHighPtMuonNoDz"),
+        quantity = cms.untracked.string("userFloat('isHighPtMuonNoDz')")
         ),
     ### High pT muon variables from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#High_pT_Muon_pT_assignment_detai
    cms.PSet(
@@ -276,6 +284,10 @@ muonVars = (
        quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.charge : -900")
        ),
    ### trigger matching
+   #cms.PSet(
+   # tag = cms.untracked.string("IsMatchedToTrigger"),
+   # quantity = cms.untracked.string("userFloat('isMatched2trigger')")
+   #),
  #  cms.PSet(
  #   tag = cms.untracked.string("HLTmuonDeltaR"),
  #   quantity = cms.untracked.string("userFloat('HLTmuonDeltaR')")
@@ -957,6 +969,10 @@ electronVars = (
       quantity = cms.untracked.string("userFloat('sumPUPt')")
       ),
     # Impact point
+    #cms.PSet(
+    #    tag = cms.untracked.string("IsMatchedToTrigger"),
+    #    quantity = cms.untracked.string("userFloat('isMatched2trigger')")
+    #    ),
     cms.PSet(
       tag = cms.untracked.string("Dxy"),
       quantity = cms.untracked.string("userFloat('dxy')")
@@ -964,6 +980,14 @@ electronVars = (
     cms.PSet(
       tag = cms.untracked.string("Dz"),
       quantity = cms.untracked.string("userFloat('dz')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("Dxyerr"),
+      quantity = cms.untracked.string("userFloat('dxyErr')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("Dzerr"),
+      quantity = cms.untracked.string("userFloat('dzErr')")
       ),
     cms.PSet(
       tag = cms.untracked.string("DB"),

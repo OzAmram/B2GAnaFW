@@ -684,7 +684,7 @@ process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidate
 process.skimmedPatMuons = cms.EDFilter(
     "PATMuonSelector",
     src = cms.InputTag(muLabel),
-    cut = cms.string("pt > 0.0 && abs(eta) < 2.4")
+    cut = cms.string("pt > 10.0 && abs(eta) < 2.4")
     )
 
 process.skimmedPatPhotons = cms.EDFilter(
@@ -744,7 +744,7 @@ process.muonUserData = cms.EDProducer(
     ### TTRIGGER ###
     triggerResults = cms.InputTag(triggerResultsLabel,"",hltProcess),
     triggerSummary = cms.InputTag(triggerSummaryLabel,"",hltProcess),
-    hltPath            = cms.string("HLT_IsoMu40_eta2p1_v11"),
+    hltPath            = cms.string("HLT_IsoMu24"),
     hlt2reco_deltaRmax = cms.double(0.1),
     # mainROOTFILEdir    = cms.string("../data/")
     )
@@ -874,7 +874,7 @@ process.electronUserData = cms.EDProducer(
     triggerResults = cms.InputTag(triggerResultsLabel,"",hltProcess),
     triggerSummary = cms.InputTag(triggerSummaryLabel,"",hltProcess),
     hltElectronFilter  = cms.InputTag(hltElectronFilterLabel),  ##trigger matching code to be fixed!
-    hltPath             = cms.string("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL"),
+    hltPath             = cms.string("HLT_Ele27_WPTight_Gsf"),
     eleVetoIdFullInfoMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto"),
     eleLooseIdFullInfoMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose"),
     eleMediumIdFullInfoMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium"),

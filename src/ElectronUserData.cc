@@ -209,11 +209,55 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
   ////   std::cout << "event pass : " << hltPath_ << std::endl;
   //// }
 
-  //edm::Handle<trigger::TriggerEvent> triggerSummary;
-  //iEvent.getByToken(triggerSummaryLabel_, triggerSummary);
+  /*
+  edm::Handle<trigger::TriggerEvent> triggerSummary;
 
+  if ( triggerSummary.isValid() ) {
+    iEvent.getByToken(triggerSummaryLabel_, triggerSummary);
+
+    // Results from TriggerEvent product - Attention: must look only for
+    // modules actually run in this path for this event!
+    if(pathFound){
+      const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
+      const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
+      const unsigned int moduleIndex(triggerResults->index(triggerIndex));
+
+      for (unsigned int j=0; j<=moduleIndex; ++j) {
+
+        const string& moduleLabel(moduleLabels[j]);
+        const string  moduleType(hltConfig.moduleType(moduleLabel));
+        // check whether the module is packed up in TriggerEvent product
+        const unsigned int filterIndex(triggerSummary->filterIndex(InputTag(moduleLabel,"","HLT")));
+
+        if (filterIndex<triggerSummary->sizeFilters()) {
+          //	  cout << " 'L3' filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
+          TString lable = moduleLabel.c_str();
+          if (lable.Contains(hltElectronFilterLabel_.label())) {
+
+            const trigger::Vids& VIDS (triggerSummary->filterIds(filterIndex));
+            const trigger::Keys& KEYS(triggerSummary->filterKeys(filterIndex));
+            const size_type nI(VIDS.size());
+            const size_type nK(KEYS.size());
+            assert(nI==nK);
+            const size_type n(max(nI,nK));
+            //	    cout << "   " << n  << " accepted TRIGGER objects found: " << endl;
+            const trigger::TriggerObjectCollection& TOC(triggerSummary->getObjects());
+            for (size_type i=0; i!=n; ++i) {
+              const trigger::TriggerObject& TO(TOC[KEYS[i]]);
+              ElectronLegObjects.push_back(TO);	  
+              //	  cout << "   " << i << " " << VIDS[i] << "/" << KEYS[i] << ": "
+              //	       << TO.id() << " " << TO.pt() << " " << TO.eta() << " " << TO.phi() << " " << TO.mass()
+              //	       << endl;
+            }
+          }
+        }
+      }
+    }
+  }
+  */
   ////find the index corresponding to the event
   //if(false){ ///to be done after understanding which trigger(s) to use.
+
   //size_t ElectronFilterIndex = (*triggerSummary).filterIndex(hltElectronFilterLabel_);
   //trigger::TriggerObjectCollection allTriggerObjects = triggerSummary->getObjects();
   //trigger::TriggerObjectCollection ElectronLegObjects;
@@ -264,7 +308,9 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
    
     // Impact parameter
     float dxy   = el.gsfTrack()->dxy(vtxPoint);
+    float dxyErr   = el.gsfTrack()->dxyError();
     float dz    = el.gsfTrack()->dz(vtxPoint);
+    float dzErr   = el.gsfTrack()->dzError();
     float dB    = el.dB (pat::Electron::PV3D);
     float dBErr = el.edB(pat::Electron::PV3D);
 
@@ -287,6 +333,11 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     int   hzz_mva_cat = (*HZZMva_cats)[ elPtr ];
     // if(gp_mva_val > 0.1 ) cout<<"true ele "<<mvaval<<endl;
 
+    //trigger matching
+    int idx       = -1;
+    double deltaR = -1.;
+    //bool isMatched2trigger = isMatchedWithTrigger(el, ElectronLegObjects, idx) ;
+    //cout << "IsMatched2trigger " << isMatched2trigger << endl;
 
 
     //retrieving bits from fullflowcutData  and masking rel iso EA cut isolation cut
@@ -324,9 +375,13 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     el.addUserFloat("full5x5",     full5x5);
     el.addUserFloat("hoe",         hoe);
     el.addUserFloat("dxy",         dxy);
+    el.addUserFloat("dxyErr",      dxyErr);
     el.addUserFloat("dz",          dz);
+    el.addUserFloat("dzErr",       dzErr);
     el.addUserFloat("dB",          dB);
     el.addUserFloat("dBErr",       dBErr);
+    //el.addUserFloat("FOOOOBBARRRR",    isMatched2trigger );
+    //el.addUserFloat("isMatched2trigger",    isMatched2trigger );
     el.addUserFloat("ooEmooP",     ooEmooP_);
     el.addUserFloat("missHits",     missHits);
     el.addUserFloat("hasMatchConv",     hasMatchConv);   

@@ -185,52 +185,54 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
   // TRIGGER MATCHING
 
+  /*
   trigger::TriggerObjectCollection MuonLegObjects;
 
-  //edm::Handle<trigger::TriggerEvent> triggerSummary;
+  edm::Handle<trigger::TriggerEvent> triggerSummary;
 
-  //if ( triggerSummary.isValid() ) {
-  //  iEvent.getByToken(triggerSummaryLabel_, triggerSummary);
+  if ( triggerSummary.isValid() ) {
+    iEvent.getByToken(triggerSummaryLabel_, triggerSummary);
 
-  //  // Results from TriggerEvent product - Attention: must look only for
-  //  // modules actually run in this path for this event!
-  //  if(pathFound){
-  //    const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
-  //    const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
-  //    const unsigned int moduleIndex(triggerResults->index(triggerIndex));
+    // Results from TriggerEvent product - Attention: must look only for
+    // modules actually run in this path for this event!
+    if(pathFound){
+      const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
+      const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
+      const unsigned int moduleIndex(triggerResults->index(triggerIndex));
 
-  //    for (unsigned int j=0; j<=moduleIndex; ++j) {
+      for (unsigned int j=0; j<=moduleIndex; ++j) {
 
-  //      const string& moduleLabel(moduleLabels[j]);
-  //      const string  moduleType(hltConfig.moduleType(moduleLabel));
-  //      // check whether the module is packed up in TriggerEvent product
-  //      const unsigned int filterIndex(triggerSummary->filterIndex(InputTag(moduleLabel,"","HLT")));
+        const string& moduleLabel(moduleLabels[j]);
+        const string  moduleType(hltConfig.moduleType(moduleLabel));
+        // check whether the module is packed up in TriggerEvent product
+        const unsigned int filterIndex(triggerSummary->filterIndex(InputTag(moduleLabel,"","HLT")));
 
-  //      if (filterIndex<triggerSummary->sizeFilters()) {
-  //        //	  cout << " 'L3' filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
-  //        TString lable = moduleLabel.c_str();
-  //        if (lable.Contains(hltMuonFilterLabel_.label())) {
+        if (filterIndex<triggerSummary->sizeFilters()) {
+          //	  cout << " 'L3' filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
+          TString lable = moduleLabel.c_str();
+          if (lable.Contains(hltMuonFilterLabel_.label())) {
 
-  //          const trigger::Vids& VIDS (triggerSummary->filterIds(filterIndex));
-  //          const trigger::Keys& KEYS(triggerSummary->filterKeys(filterIndex));
-  //          const size_type nI(VIDS.size());
-  //          const size_type nK(KEYS.size());
-  //          assert(nI==nK);
-  //          const size_type n(max(nI,nK));
-  //          //	    cout << "   " << n  << " accepted TRIGGER objects found: " << endl;
-  //          const trigger::TriggerObjectCollection& TOC(triggerSummary->getObjects());
-  //          for (size_type i=0; i!=n; ++i) {
-  //            const trigger::TriggerObject& TO(TOC[KEYS[i]]);
-  //            MuonLegObjects.push_back(TO);	  
-  //            //	  cout << "   " << i << " " << VIDS[i] << "/" << KEYS[i] << ": "
-  //            //	       << TO.id() << " " << TO.pt() << " " << TO.eta() << " " << TO.phi() << " " << TO.mass()
-  //            //	       << endl;
-  //          }
-  //        }
-  //      }
-  //    }
-  //  }
-  //}
+            const trigger::Vids& VIDS (triggerSummary->filterIds(filterIndex));
+            const trigger::Keys& KEYS(triggerSummary->filterKeys(filterIndex));
+            const size_type nI(VIDS.size());
+            const size_type nK(KEYS.size());
+            assert(nI==nK);
+            const size_type n(max(nI,nK));
+            //	    cout << "   " << n  << " accepted TRIGGER objects found: " << endl;
+            const trigger::TriggerObjectCollection& TOC(triggerSummary->getObjects());
+            for (size_type i=0; i!=n; ++i) {
+              const trigger::TriggerObject& TO(TOC[KEYS[i]]);
+              MuonLegObjects.push_back(TO);	  
+              //	  cout << "   " << i << " " << VIDS[i] << "/" << KEYS[i] << ": "
+              //	       << TO.id() << " " << TO.pt() << " " << TO.eta() << " " << TO.phi() << " " << TO.mass()
+              //	       << endl;
+            }
+          }
+        }
+      }
+    }
+  }
+  */
 
   //  std::cout << "----> MuonLegObjects: " << MuonLegObjects.size() << " <--> RECO : " << muonColl->size() << std::endl;
   /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
@@ -243,6 +245,15 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     bool isMediumMuon = m.isMediumMuon();
     bool isTightMuon = m.isTightMuon(PV);
     bool isHighPtMuon = m.isHighPtMuon(PV);
+    bool isHighPtMuonNoDz = m.isGlobalMuon() &&
+        (m.globalTrack()->hitPattern().numberOfValidMuonHits() > 0) &&
+        (m.numberOfMatchedStations() > 1) &&
+        (m.muonBestTrack()->ptError()/m.muonBestTrack()->pt() < 0.3) &&
+        (fabs(m.muonBestTrack()->dxy(PV.position())) < 0.2 ) &&
+        (m.innerTrack()->hitPattern().numberOfValidPixelHits() > 0) &&
+        (m.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5);
+
+    
 
     // 2016 Medium ID
     // https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2?rev=27#MediumID2016_to_be_used_with_Run
@@ -267,6 +278,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     double iso04 = (sumChargedHadronPt+TMath::Max(0.,sumNeutralHadronPt+sumPhotonPt-0.5*sumPUPt))/pt;
     double EA = getEA(m.eta());
     double miniIso = getPFMiniIsolation(packedPFCands, dynamic_cast<const reco::Candidate *>(&m), 0.05, 0.2, 10., false, true, EA, rho_miniIso);
+    double trackerIso = m.isolationR03().sumPt/m.pt();
 
     // trigger matched 
 
@@ -292,6 +304,9 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     m.addUserFloat("isMediumMuon2016", isMediumMuon2016);
     m.addUserFloat("isTightMuon", isTightMuon);
     m.addUserFloat("isHighPtMuon", isHighPtMuon);
+    m.addUserFloat("isHighPtMuonNoDz", isHighPtMuonNoDz);
+    //m.addUserFloat("isMatched2trigger", isMatched2trigger);
+    m.addUserFloat("trackerIso", trackerIso);
     m.addUserFloat("segmentCompatibility", segmentCompatibility);
     m.addUserFloat("dxy",         dxy);
     m.addUserFloat("dxyErr",      dxyErr);
