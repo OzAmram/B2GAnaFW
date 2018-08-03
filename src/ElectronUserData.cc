@@ -305,6 +305,11 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     float absisoWithDBeta = pfIso.sumChargedHadronPt + max(0.0 , pfIso.sumNeutralHadronEt + pfIso.sumPhotonEt - 0.5 * pfIso.sumPUPt );
     float relIsoWithDBeta_ = absisoWithDBeta/el.pt();
     double miniIso = getPFMiniIsolation(packedPFCands, dynamic_cast<const reco::Candidate *>(&el), 0.05, 0.2, 10., false, true, EA, rho_miniIso);
+
+
+    auto scale_corr  = el.userFloat("ecalTrkEnergyPostCorr") / el.energy();
+    //float scale_corr  = 1.0;
+
    
     // Impact parameter
     float dxy   = el.gsfTrack()->dxy(vtxPoint);
@@ -392,6 +397,7 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     el.addUserFloat("sumNeutralHadronEt", pfIso.sumNeutralHadronEt  );
     el.addUserFloat("sumPhotonEt",  pfIso.sumPhotonEt );
     el.addUserFloat("sumPUPt", pfIso.sumPUPt  );
+    el.addUserFloat("scaleCorr", scale_corr);
 
     el.addUserFloat("rho", rho );
     el.addUserFloat("EA", EA );

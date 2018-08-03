@@ -79,10 +79,6 @@ metFull =  cms.EDProducer(
         ),
     )
 
-metFullClean = metFull.clone(
-  src = cms.InputTag("skimmedPatMETClean"),
-  prefix = cms.untracked.string("metFullClean"),
-  )
 
 puppimetFull = metFull.clone(
   src = cms.InputTag("skimmedPatPuppiMET"),
@@ -996,6 +992,10 @@ electronVars = (
     cms.PSet(
       tag = cms.untracked.string("DBerr"),
       quantity = cms.untracked.string("userFloat('dBErr')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorr"),
+      quantity = cms.untracked.string("userFloat('scaleCorr')")
       ),
     # Cut-based ID variables
     cms.PSet(
