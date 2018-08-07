@@ -308,6 +308,10 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
 
 
     auto scale_corr  = el.userFloat("ecalTrkEnergyPostCorr") / el.energy();
+    auto scale_corr_up  = el.userFloat("energyScaleUp") / el.energy();
+    auto scale_corr_down  = el.userFloat("energyScaleDown") / el.energy();
+    auto scale_smear_down  = el.userFloat("energySigmaDown") / el.energy();
+    auto scale_smear_up  = el.userFloat("energySigmaUp") / el.energy();
     //float scale_corr  = 1.0;
 
    
@@ -398,6 +402,10 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     el.addUserFloat("sumPhotonEt",  pfIso.sumPhotonEt );
     el.addUserFloat("sumPUPt", pfIso.sumPUPt  );
     el.addUserFloat("scaleCorr", scale_corr);
+    el.addUserFloat("scaleCorrUp", scale_corr_up);
+    el.addUserFloat("scaleCorrDown", scale_corr_down);
+    el.addUserFloat("scaleSmearDown", scale_smear_down);
+    el.addUserFloat("scaleSmearUp", scale_smear_up);
 
     el.addUserFloat("rho", rho );
     el.addUserFloat("EA", EA );

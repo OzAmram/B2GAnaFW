@@ -997,6 +997,22 @@ electronVars = (
       tag = cms.untracked.string("ScaleCorr"),
       quantity = cms.untracked.string("userFloat('scaleCorr')")
       ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrUp"),
+      quantity = cms.untracked.string("userFloat('scaleCorrUp')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrDown"),
+      quantity = cms.untracked.string("userFloat('scaleCorrDown')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleSmearDown"),
+      quantity = cms.untracked.string("userFloat('scaleSmearDown')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleSmearUp"),
+      quantity = cms.untracked.string("userFloat('scaleSmearUp')")
+      ),
     # Cut-based ID variables
     cms.PSet(
       tag = cms.untracked.string("dEtaIn"),
