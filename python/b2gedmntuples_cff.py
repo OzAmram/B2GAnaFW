@@ -1013,6 +1013,10 @@ electronVars = (
       tag = cms.untracked.string("ScaleSmearUp"),
       quantity = cms.untracked.string("userFloat('scaleSmearUp')")
       ),
+    cms.PSet(
+      tag = cms.untracked.string("GoodCharge"),
+      quantity = cms.untracked.string("userFloat('goodCharge')")
+      ),
     # Cut-based ID variables
     cms.PSet(
       tag = cms.untracked.string("dEtaIn"),

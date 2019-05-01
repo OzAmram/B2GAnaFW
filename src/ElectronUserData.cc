@@ -312,6 +312,8 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     auto scale_corr_down  = el.userFloat("energyScaleDown") / el.energy();
     auto scale_smear_down  = el.userFloat("energySigmaDown") / el.energy();
     auto scale_smear_up  = el.userFloat("energySigmaUp") / el.energy();
+
+    bool good_charge = el.isGsfCtfScPixChargeConsistent() && el.isGsfScPixChargeConsistent() && el.isGsfCtfChargeConsistent();
     //float scale_corr  = 1.0;
 
    
@@ -406,6 +408,7 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     el.addUserFloat("scaleCorrDown", scale_corr_down);
     el.addUserFloat("scaleSmearDown", scale_smear_down);
     el.addUserFloat("scaleSmearUp", scale_smear_up);
+    el.addUserFloat("goodCharge", good_charge);
 
     el.addUserFloat("rho", rho );
     el.addUserFloat("EA", EA );
