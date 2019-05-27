@@ -104,23 +104,27 @@ muonVars = (
         tag = cms.untracked.string("MiniIso"),
         quantity = cms.untracked.string("userFloat('miniIso')")
    ),
+   cms.PSet(
+        tag = cms.untracked.string("TrackerIso"),
+        quantity = cms.untracked.string("userFloat('TrackerIso')")
+   ),
    # Impact point
    cms.PSet(
         tag = cms.untracked.string("Dxy"),
         quantity = cms.untracked.string("userFloat('dxy')")
    ),
-   # cms.PSet(
-   #      tag = cms.untracked.string("Dxyerr"),
-   #      quantity = cms.untracked.string("userFloat('dxyErr')")
-   # ),
+    cms.PSet(
+         tag = cms.untracked.string("Dxyerr"),
+         quantity = cms.untracked.string("userFloat('dxyErr')")
+    ),
    cms.PSet(
         tag = cms.untracked.string("Dz"),
         quantity = cms.untracked.string("userFloat('dz')")
         ),
-   # cms.PSet(
-   #   tag = cms.untracked.string("Dzerr"),
-   #   quantity = cms.untracked.string("userFloat('dzErr')")
-   #   ),
+    cms.PSet(
+      tag = cms.untracked.string("Dzerr"),
+      quantity = cms.untracked.string("userFloat('dzErr')")
+      ),
    cms.PSet(
         tag = cms.untracked.string("DB"),
         quantity = cms.untracked.string("userFloat('dB')")
@@ -153,6 +157,10 @@ muonVars = (
     cms.PSet(
         tag = cms.untracked.string("IsHighPtMuon"),
         quantity = cms.untracked.string("userFloat('isHighPtMuon')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("IsHighPtMuonNoDz"),
+        quantity = cms.untracked.string("userFloat('isHighPtMuonNoDz')")
         ),
     ### High pT muon variables from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#High_pT_Muon_pT_assignment_detai
    cms.PSet(
@@ -967,12 +975,44 @@ electronVars = (
       quantity = cms.untracked.string("userFloat('dz')")
       ),
     cms.PSet(
+      tag = cms.untracked.string("Dxyerr"),
+      quantity = cms.untracked.string("userFloat('dxyErr')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("Dzerr"),
+      quantity = cms.untracked.string("userFloat('dzErr')")
+      ),
+    cms.PSet(
       tag = cms.untracked.string("DB"),
       quantity = cms.untracked.string("userFloat('dB')")
       ),
     cms.PSet(
       tag = cms.untracked.string("DBerr"),
       quantity = cms.untracked.string("userFloat('dBErr')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorr"),
+      quantity = cms.untracked.string("userFloat('scaleCorr')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrUp"),
+      quantity = cms.untracked.string("userFloat('scaleCorrUp')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrDown"),
+      quantity = cms.untracked.string("userFloat('scaleCorrDown')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleSmearDown"),
+      quantity = cms.untracked.string("userFloat('scaleSmearDown')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleSmearUp"),
+      quantity = cms.untracked.string("userFloat('scaleSmearUp')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("GoodCharge"),
+      quantity = cms.untracked.string("userFloat('goodCharge')")
       ),
     # Cut-based ID variables
     cms.PSet(
@@ -1017,24 +1057,52 @@ electronVars = (
         ),
     # IDs
     cms.PSet(
-        tag = cms.untracked.string("vidVeto"),
-        quantity = cms.untracked.string("userFloat('vidVeto')")
+        tag = cms.untracked.string("idVeto"),
+        quantity = cms.untracked.string("userFloat('idVeto')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("vidLoose"),
-        quantity = cms.untracked.string("userFloat('vidLoose')")
+        tag = cms.untracked.string("idLoose"),
+        quantity = cms.untracked.string("userFloat('idLoose')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("vidMedium"),
-        quantity = cms.untracked.string("userFloat('vidMedium')")
+        tag = cms.untracked.string("idMedium"),
+        quantity = cms.untracked.string("userFloat('idMedium')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("vidTight"),
-        quantity = cms.untracked.string("userFloat('vidTight')")
+        tag = cms.untracked.string("idTight"),
+        quantity = cms.untracked.string("userFloat('idTight')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("vidHEEP"),
-        quantity = cms.untracked.string("userFloat('vidHEEP')")
+        tag = cms.untracked.string("idVetoNoIso"),
+        quantity = cms.untracked.string("userFloat('idVetoNoIso')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idLooseNoIso"),
+        quantity = cms.untracked.string("userFloat('idLooseNoIso')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idMediumNoIso"),
+        quantity = cms.untracked.string("userFloat('idMediumNoIso')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idTightNoIso"),
+        quantity = cms.untracked.string("userFloat('idTightNoIso')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idVetoCuts"),
+        quantity = cms.untracked.string("userFloat('idVetoCuts')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idLooseCuts"),
+        quantity = cms.untracked.string("userFloat('idLooseCuts')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idMediumCuts"),
+        quantity = cms.untracked.string("userFloat('idMediumCuts')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idTightCuts"),
+        quantity = cms.untracked.string("userFloat('idTightCuts')")
         ),
     #MVA IDs
     cms.PSet(

@@ -251,16 +251,64 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     float absisoWithDBeta = pfIso.sumChargedHadronPt + max(0.0 , pfIso.sumNeutralHadronEt + pfIso.sumPhotonEt - 0.5 * pfIso.sumPUPt );
     float relIsoWithDBeta_ = absisoWithDBeta/el.pt();
     double miniIso = getPFMiniIsolation(packedPFCands, dynamic_cast<const reco::Candidate *>(&el), 0.05, 0.2, 10., false, true, EA, rho_miniIso);
+
+
+    auto scale_corr  = el.userFloat("ecalTrkEnergyPostCorr") / el.energy();
+    auto scale_corr_up  = el.userFloat("energyScaleUp") / el.energy();
+    auto scale_corr_down  = el.userFloat("energyScaleDown") / el.energy();
+    auto scale_smear_down  = el.userFloat("energySigmaDown") / el.energy();
+    auto scale_smear_up  = el.userFloat("energySigmaUp") / el.energy();
+
+    bool good_charge = el.isGsfCtfScPixChargeConsistent() && el.isGsfScPixChargeConsistent() && el.isGsfCtfChargeConsistent();
    
     // Impact parameter
     float dxy   = el.gsfTrack()->dxy(vtxPoint);
+    float dxyErr   = el.gsfTrack()->dxyError();
     float dz    = el.gsfTrack()->dz(vtxPoint);
+    float dzErr   = el.gsfTrack()->dzError();
     float dB    = el.dB (pat::Electron::PV3D);
     float dBErr = el.edB(pat::Electron::PV3D);
 
     if(debug_>=1) cout<<" ele " << i <<" pt "<< el.pt()<<" eta "<<el.eta()<<"fabs(1/E-1/P) "<< ooEmooP_ <<" dxy "<< dxy <<" dz " << dz <<" iso " << relIsoWithDBeta_<<endl; 		    
      // conversion rejection match
     bool hasMatchConv = ConversionTools::hasMatchedConversion(el, conversions, beamspot.position());
+
+
+    bool idVeto   = el.electronID("cutBasedElectronID-Fall17-94X-V1-veto");
+    bool idLoose   = el.electronID("cutBasedElectronID-Fall17-94X-V1-loose");
+    bool idMedium   = el.electronID("cutBasedElectronID-Fall17-94X-V1-medium");
+    bool idTight   = el.electronID("cutBasedElectronID-Fall17-94X-V1-tight");
+
+    /* 8 cuts for electron ID are: 
+    full5x5_sigmaIetaIeta 
+    abs(dEtaInSeed)  	 		
+    abs(dPhiIn)  		
+    H/E  		
+    Rel. comb. PF iso with EA corr 
+    abs(1/E-1/p) 
+    expected missing inner hits 
+    pass conversion veto 
+
+    So ID no iso would be 11110111 = 0xF7
+    */
+    int IDnoIso = 0xF7;
+    
+
+    int idVetoCuts   = el.userInt("cutBasedElectronID-Fall17-94X-V1-veto");
+    int idLooseCuts   = el.userInt("cutBasedElectronID-Fall17-94X-V1-loose");
+    int idMediumCuts   = el.userInt("cutBasedElectronID-Fall17-94X-V1-medium");
+    int idTightCuts   = el.userInt("cutBasedElectronID-Fall17-94X-V1-tight");
+
+
+    bool idVetoNoIso = (idVetoCuts == IDnoIso) || idVeto;
+    bool idLooseNoIso = (idLooseCuts == IDnoIso) || idLoose;
+    bool idMediumNoIso = (idMediumCuts == IDnoIso) || idMedium;
+    bool idTightNoIso = (idTightCuts == IDnoIso) || idTight;
+
+
+
+
+
 
     // Look up the ID decision for this electron in 
     // the ValueMap object and store it. We need a Ptr object as the key.
@@ -329,7 +377,9 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     el.addUserFloat("full5x5",     full5x5);
     el.addUserFloat("hoe",         hoe);
     el.addUserFloat("dxy",         dxy);
+    el.addUserFloat("dxyErr",      dxyErr);
     el.addUserFloat("dz",          dz);
+    el.addUserFloat("dzErr",       dzErr);
     el.addUserFloat("dB",          dB);
     el.addUserFloat("dBErr",       dBErr);
     el.addUserFloat("ooEmooP",     ooEmooP_);
@@ -342,14 +392,31 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     el.addUserFloat("sumNeutralHadronEt", pfIso.sumNeutralHadronEt  );
     el.addUserFloat("sumPhotonEt",  pfIso.sumPhotonEt );
     el.addUserFloat("sumPUPt", pfIso.sumPUPt  );
+    el.addUserFloat("scaleCorr", scale_corr);
+    el.addUserFloat("scaleCorrUp", scale_corr_up);
+    el.addUserFloat("scaleCorrDown", scale_corr_down);
+    el.addUserFloat("scaleSmearDown", scale_smear_down);
+    el.addUserFloat("scaleSmearUp", scale_smear_up);
+    el.addUserFloat("goodCharge", good_charge);
+
+
 
     el.addUserFloat("rho", rho );
     el.addUserFloat("EA", EA );
-    el.addUserFloat("vidVeto",    vidVeto );
-    el.addUserFloat("vidLoose",   vidLoose );
-    el.addUserFloat("vidMedium",  vidMedium );
-    el.addUserFloat("vidTight",   vidTight );
-    el.addUserFloat("vidHEEP",    vidHEEP );
+
+
+    el.addUserFloat("idVeto",    idVeto );
+    el.addUserFloat("idLoose",   idLoose );
+    el.addUserFloat("idMedium",  idMedium );
+    el.addUserFloat("idTight",   idTight );
+    el.addUserFloat("idVetoCuts",    idVetoCuts );
+    el.addUserFloat("idLooseCuts",   idLooseCuts );
+    el.addUserFloat("idMediumCuts",  idMediumCuts );
+    el.addUserFloat("idTightCuts",   idTightCuts );
+    el.addUserFloat("idVetoNoIso",    idVetoNoIso );
+    el.addUserFloat("idLooseNoIso",   idLooseNoIso );
+    el.addUserFloat("idMediumNoIso",  idMediumNoIso );
+    el.addUserFloat("idTightNoIso",   idTightNoIso );
 
     el.addUserFloat("vidVetonoiso",    vidVeto_noiso );
     el.addUserFloat("vidLoosenoiso",    vidLoose_noiso );
@@ -391,15 +458,14 @@ ElectronUserData::isMatchedWithTrigger(const pat::Electron p, trigger::TriggerOb
 
 
 float ElectronUserData::getEA(float eta){
-  //These are Effective areas suitable for 80X samples post ICHEP
   float effArea = 0.;
-  if(abs(eta)>0.0 && abs(eta)<=1.0)   effArea = 0.1703;
-  if(abs(eta)>1.0 && abs(eta)<=1.479) effArea = 0.1715;
-  if(abs(eta)>1.479 && abs(eta)<=2.0) effArea = 0.1213;
-  if(abs(eta)>2.0 && abs(eta)<=2.2)   effArea = 0.1230;
-  if(abs(eta)>2.2 && abs(eta)<=2.3)   effArea = 0.1635;
-  if(abs(eta)>2.3 && abs(eta)<=2.4)   effArea = 0.1937;
-  if(abs(eta)>2.4 && abs(eta)<=5.0)   effArea = 0.2393;
+  if(abs(eta)=>0.0 && abs(eta)<1.0)   effArea = 0.1752;
+  if(abs(eta)=>1.0 && abs(eta)<1.479) effArea = 0.1862;
+  if(abs(eta)=>1.479 && abs(eta)=2.0) effArea = 0.1411;
+  if(abs(eta)=>2.0 && abs(eta)<2.2)   effArea = 0.1534;
+  if(abs(eta)=>2.2 && abs(eta)<2.3)   effArea = 0.1903;
+  if(abs(eta)=>2.3 && abs(eta)<2.4)   effArea = 0.2243;
+  if(abs(eta)=>2.4 && abs(eta)<5.0)   effArea = 0.2687;
   return effArea;
 }
 

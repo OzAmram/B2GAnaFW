@@ -52,7 +52,7 @@ options.register('DataProcessing',
     opts.VarParsing.multiplicity.singleton,
     opts.VarParsing.varType.string,
     'Data processing types. Options are:\
-                   Data_94X and MC_Fall17MiniAODv2\
+                   Data_94X and MC\
                    Previous version pre-ReMiniAOD for comparison are\
                    Data_94X_Nov17 and MC_Fall17MiniAODv1'
     )
@@ -113,23 +113,24 @@ options.setDefault('maxEvents', 100)
 options.parseArguments()
 
 if options.DataProcessing == "":
-  sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: Data_94X and MC_Fall17MiniAODv2.\n")
+  sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: Data_94X and MC.\n")
 
 
+#Recommended GT's https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmVAnalysisSummaryTable
 if options.globalTag != "": 
   print "!!!!WARNING: You have chosen globalTag as", options.globalTag, ". Please check if this corresponds to your dataset."
 else: 
   if "Data_94X" in options.DataProcessing:
-    options.globalTag="94X_dataRun2_v6"
-  elif "MC_Fall17MiniAOD"in options.DataProcessing:
-    options.globalTag="94X_mc2017_realistic_v14"
+    options.globalTag="94X_dataRun2_v11"
+  elif "MC"in options.DataProcessing:
+    options.globalTag="94X_mc2017_realistic_v17"
   else:
     sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: \
       'Data_94X', 'MC_Fall17MiniAODv2' \
       'Data_94X_Nov17', 'MC_Fall17MiniAODv1' \
       .\n")
 
-if "Data_94X" in options.DataProcessing  or  "MC_Fall17MiniAOD" in options.DataProcessing: ### Use no HF met until a solution is found
+if "Data_94X" in options.DataProcessing  or  "MC" in options.DataProcessing: ### Use no HF met until a solution is found
   options.useNoHFMET=True
 
 
@@ -213,7 +214,7 @@ if ("Data" in options.DataProcessing and options.forceResiduals): corrections.ex
 if options.usePrivateSQLite:
   if "Data_94X" in options.DataProcessing:
     jec_era="Fall17_17Nov2017BCDEF_V6_DATA"
-  elif "MC_Fall17MiniAOD" in options.DataProcessing: ### to test relVal
+  elif "MC" in options.DataProcessing: ### to test relVal
     jec_era="Fall17_17Nov2017_V6_MC"
 
     # JEC
@@ -584,7 +585,7 @@ process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidate
 process.skimmedPatMuons = cms.EDFilter(
     "PATMuonSelector",
     src = cms.InputTag(muLabel),
-    cut = cms.string("pt > 0.0 && abs(eta) < 2.4")
+    cut = cms.string("pt > 15.0 && abs(eta) < 2.4")
     )
 
 #process.skimmedPatPhotons = cms.EDFilter(
@@ -596,7 +597,7 @@ process.skimmedPatMuons = cms.EDFilter(
 process.skimmedPatElectrons = cms.EDFilter(
     "PATElectronSelector",
     src = cms.InputTag(elLabel),
-    cut = cms.string("pt > 10 && abs(eta) < 2.5")
+    cut = cms.string("pt > 15 && abs(eta) < 2.6")
     )
 
 #process.skimmedPatElectrons.cut = cms.string("pt > 10 && abs(eta) < 2.5")
@@ -1002,7 +1003,7 @@ if "MC" in options.DataProcessing:
       "keep LHERunInfoProduct_*_*_*"
       )
 
-process.edmNtuplesOut.fileName=options.outputLabel
+process.edmNtuplesOut.fileName="edmNTuplesOut.root"
 
 #process.edmNtuplesOut.SelectEvents = cms.untracked.PSet(
 #    SelectEvents = cms.vstring('filterPath')
@@ -1014,11 +1015,11 @@ process.edmNtuplesOut.fileName=options.outputLabel
 #     process.analysisPath
 #    )
 
-process.endPath = cms.EndPath(process.edmNtuplesOut)
-
-process.myTask = cms.Task()
-process.myTask.add(*[getattr(process,prod) for prod in process.producers_()])
-process.myTask.add(*[getattr(process,filt) for filt in process.filters_()])
-process.endPath.associate(process.myTask)
+#process.endPath = cms.EndPath(process.edmNtuplesOut)
+#
+#process.myTask = cms.Task()
+#process.myTask.add(*[getattr(process,prod) for prod in process.producers_()])
+#process.myTask.add(*[getattr(process,filt) for filt in process.filters_()])
+#process.endPath.associate(process.myTask)
 
 open('B2GEntupleFileDump.py','w').write(process.dumpPython())

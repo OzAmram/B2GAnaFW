@@ -243,6 +243,15 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     bool isMediumMuon = m.isMediumMuon();
     bool isTightMuon = m.isTightMuon(PV);
     bool isHighPtMuon = m.isHighPtMuon(PV);
+    bool isHighPtMuonNoDz = m.isGlobalMuon() &&
+        (m.globalTrack()->hitPattern().numberOfValidMuonHits() > 0) &&
+        (m.numberOfMatchedStations() > 1) &&
+        (m.muonBestTrack()->ptError()/m.muonBestTrack()->pt() < 0.3) &&
+        (fabs(m.muonBestTrack()->dxy(PV.position())) < 0.2 ) &&
+        (m.innerTrack()->hitPattern().numberOfValidPixelHits() > 0) &&
+        (m.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5);
+
+
 
     // 2016 Medium ID
     // https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2?rev=27#MediumID2016_to_be_used_with_Run
@@ -267,6 +276,8 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     double iso04 = (sumChargedHadronPt+TMath::Max(0.,sumNeutralHadronPt+sumPhotonPt-0.5*sumPUPt))/pt;
     double EA = getEA(m.eta());
     double miniIso = getPFMiniIsolation(packedPFCands, dynamic_cast<const reco::Candidate *>(&m), 0.05, 0.2, 10., false, true, EA, rho_miniIso);
+    double trackerIso = m.isolationR03().sumPt/m.pt();
+
 
     // trigger matched 
 
@@ -292,6 +303,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     m.addUserFloat("isMediumMuon2016", isMediumMuon2016);
     m.addUserFloat("isTightMuon", isTightMuon);
     m.addUserFloat("isHighPtMuon", isHighPtMuon);
+    m.addUserFloat("isHighPtMuonNoDz", isHighPtMuonNoDz);
     m.addUserFloat("segmentCompatibility", segmentCompatibility);
     m.addUserFloat("dxy",         dxy);
     m.addUserFloat("dxyErr",      dxyErr);
@@ -301,6 +313,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     m.addUserFloat("dBErr",       dBErr);
     m.addUserFloat("iso04",       iso04);
     m.addUserFloat("miniIso",     miniIso);
+    m.addUserFloat("trackerIso",     trackerIso);
 
     //m.addUserFloat("HLTmuonEta",   hltEta);
     //m.addUserFloat("HLTmuonPhi",   hltPhi);
@@ -471,11 +484,11 @@ MuonUserData::convertTGraph2TH1F(TGraphAsymmErrors* g) {
 
 float MuonUserData::getEA(float eta){
   float effArea = 0.;
-  if(abs(eta)>0.0 && abs(eta)<=0.8) effArea = 0.0735;
-  if(abs(eta)>0.8 && abs(eta)<=1.3) effArea = 0.0619;
-  if(abs(eta)>1.3 && abs(eta)<=2.0) effArea = 0.0465;
-  if(abs(eta)>2.0 && abs(eta)<=2.2) effArea = 0.0433;
-  if(abs(eta)>2.2 && abs(eta)<=2.5) effArea = 0.0577;
+  if(abs(eta)>=0.0 && abs(eta)<0.8) effArea = 0.0735;
+  if(abs(eta)>=0.8 && abs(eta)<1.3) effArea = 0.0619;
+  if(abs(eta)>=1.3 && abs(eta)<2.0) effArea = 0.0465;
+  if(abs(eta)>=2.0 && abs(eta)<2.2) effArea = 0.0433;
+  if(abs(eta)>=2.2 && abs(eta)<2.5) effArea = 0.0577;
   return effArea;
 }
 
