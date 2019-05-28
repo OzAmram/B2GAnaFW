@@ -418,6 +418,11 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     el.addUserFloat("idMediumNoIso",  idMediumNoIso );
     el.addUserFloat("idTightNoIso",   idTightNoIso );
 
+    el.addUserFloat("vidVeto",    vidVeto );
+    el.addUserFloat("vidLoose",    vidLoose );
+    el.addUserFloat("vidMedium",    vidMedium );
+    el.addUserFloat("vidTight",    vidTight);
+    el.addUserFloat("vidHEEP",    vidHEEP);
     el.addUserFloat("vidVetonoiso",    vidVeto_noiso );
     el.addUserFloat("vidLoosenoiso",    vidLoose_noiso );
     el.addUserFloat("vidMediumnoiso",    vidMedium_noiso );
@@ -459,13 +464,13 @@ ElectronUserData::isMatchedWithTrigger(const pat::Electron p, trigger::TriggerOb
 
 float ElectronUserData::getEA(float eta){
   float effArea = 0.;
-  if(abs(eta)=>0.0 && abs(eta)<1.0)   effArea = 0.1752;
-  if(abs(eta)=>1.0 && abs(eta)<1.479) effArea = 0.1862;
-  if(abs(eta)=>1.479 && abs(eta)=2.0) effArea = 0.1411;
-  if(abs(eta)=>2.0 && abs(eta)<2.2)   effArea = 0.1534;
-  if(abs(eta)=>2.2 && abs(eta)<2.3)   effArea = 0.1903;
-  if(abs(eta)=>2.3 && abs(eta)<2.4)   effArea = 0.2243;
-  if(abs(eta)=>2.4 && abs(eta)<5.0)   effArea = 0.2687;
+  if(abs(eta)>=0.0 && abs(eta)<1.0)   effArea = 0.1752;
+  if(abs(eta)>=1.0 && abs(eta)<1.479) effArea = 0.1862;
+  if(abs(eta)>=1.479 && abs(eta)<2.0) effArea = 0.1411;
+  if(abs(eta)>=2.0 && abs(eta)<2.2)   effArea = 0.1534;
+  if(abs(eta)>=2.2 && abs(eta)<2.3)   effArea = 0.1903;
+  if(abs(eta)>=2.3 && abs(eta)<2.4)   effArea = 0.2243;
+  if(abs(eta)>=2.4 && abs(eta)<5.0)   effArea = 0.2687;
   return effArea;
 }
 

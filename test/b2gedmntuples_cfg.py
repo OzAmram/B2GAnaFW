@@ -390,6 +390,8 @@ jetAlgoPuppi    = 'AK4PFPuppi'
 jetAlgoAK8      = 'AK8PFchs'
 jetAlgoAK8Puppi = 'AK8PFPuppi'
 
+#ak4Cut = 'pt > 20 && abs(eta) < 2.4'
+ak4Cut=''
 ak8Cut='pt > 170 && abs(eta) < 2.4'
 
 jetToolbox( process, 
@@ -401,7 +403,8 @@ jetToolbox( process,
 		JETCorrPayload=jetAlgo, 
 		addQGTagger=True,  
 		bTagDiscriminators=listBtagDiscriminatorsAK4, 
-		bTagInfos=listBTagInfos ) 
+		bTagInfos=listBTagInfos,
+        Cut = ak4Cut) 
 
 jetToolbox( process, 
 		'ak4', 
@@ -412,7 +415,8 @@ jetToolbox( process,
 		JETCorrPayload='AK4PFPuppi', 
 		JETCorrLevels=[ 'L2Relative', 'L3Absolute'], 
 		bTagDiscriminators=listBtagDiscriminatorsAK4, 
-		bTagInfos=listBTagInfos )  
+		bTagInfos=listBTagInfos,
+        Cut=ak4Cut)  
 
 jetToolbox( process, 
 		'ak8', 
@@ -597,7 +601,7 @@ process.skimmedPatMuons = cms.EDFilter(
 process.skimmedPatElectrons = cms.EDFilter(
     "PATElectronSelector",
     src = cms.InputTag(elLabel),
-    cut = cms.string("pt > 15 && abs(eta) < 2.6")
+    cut = cms.string("pt > 15.0 && abs(eta) < 2.5")
     )
 
 #process.skimmedPatElectrons.cut = cms.string("pt > 10 && abs(eta) < 2.5")

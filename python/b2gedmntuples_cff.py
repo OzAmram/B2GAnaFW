@@ -1104,42 +1104,8 @@ electronVars = (
         tag = cms.untracked.string("idTightCuts"),
         quantity = cms.untracked.string("userFloat('idTightCuts')")
         ),
-    #MVA IDs
-    cms.PSet(
-        tag = cms.untracked.string("vidMVAVeto"),
-        quantity = cms.untracked.string("userFloat('vidVeto')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidMVALoose"),
-        quantity = cms.untracked.string("userFloat('vidMVALoose')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidMVAMedium"),
-        quantity = cms.untracked.string("userFloat('vidMVAMedium')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidMVATight"),
-        quantity = cms.untracked.string("userFloat('vidMVATight')")
-        ),
-    # IDs sans iso:only available for MVA for now
-    cms.PSet(
-        tag = cms.untracked.string("vidVetonoiso"),
-        quantity = cms.untracked.string("userFloat('vidMVAVetonoiso')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidLoosenoiso"),
-        quantity = cms.untracked.string("userFloat('vidMVALoosenoiso')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidMediumnoiso"),
-        quantity = cms.untracked.string("userFloat('vidMVAMediumnoiso')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidTightnoiso"),
-        quantity = cms.untracked.string("userFloat('vidMVATightnoiso')")
-        ),
-    )
 
+    )
 
 electrons  = copy.deepcopy(basic)
 electrons.variables += electronVars
