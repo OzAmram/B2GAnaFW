@@ -106,7 +106,7 @@ muonVars = (
    ),
    cms.PSet(
         tag = cms.untracked.string("TrackerIso"),
-        quantity = cms.untracked.string("userFloat('TrackerIso')")
+        quantity = cms.untracked.string("userFloat('trackerIso')")
    ),
    # Impact point
    cms.PSet(
@@ -1003,6 +1003,30 @@ electronVars = (
       quantity = cms.untracked.string("userFloat('scaleCorrDown')")
       ),
     cms.PSet(
+      tag = cms.untracked.string("ScaleCorrStatUp"),
+      quantity = cms.untracked.string("userFloat('scaleCorrStatUp')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrStatDown"),
+      quantity = cms.untracked.string("userFloat('scaleCorrStatDown')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrGainUp"),
+      quantity = cms.untracked.string("userFloat('scaleCorrGainUp')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrGainDown"),
+      quantity = cms.untracked.string("userFloat('scaleCorrGainDown')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrSystUp"),
+      quantity = cms.untracked.string("userFloat('scaleCorrSystUp')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrSystDown"),
+      quantity = cms.untracked.string("userFloat('scaleCorrSystDown')")
+      ),
+    cms.PSet(
       tag = cms.untracked.string("ScaleSmearDown"),
       quantity = cms.untracked.string("userFloat('scaleSmearDown')")
       ),
@@ -1057,51 +1081,51 @@ electronVars = (
         ),
     # IDs
     cms.PSet(
-        tag = cms.untracked.string("idVeto"),
+        tag = cms.untracked.string("IDVeto"),
         quantity = cms.untracked.string("userFloat('idVeto')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idLoose"),
+        tag = cms.untracked.string("IDLoose"),
         quantity = cms.untracked.string("userFloat('idLoose')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idMedium"),
+        tag = cms.untracked.string("IDMedium"),
         quantity = cms.untracked.string("userFloat('idMedium')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idTight"),
+        tag = cms.untracked.string("IDTight"),
         quantity = cms.untracked.string("userFloat('idTight')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idVetoNoIso"),
+        tag = cms.untracked.string("IDVetoNoIso"),
         quantity = cms.untracked.string("userFloat('idVetoNoIso')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idLooseNoIso"),
+        tag = cms.untracked.string("IDLooseNoIso"),
         quantity = cms.untracked.string("userFloat('idLooseNoIso')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idMediumNoIso"),
+        tag = cms.untracked.string("IDMediumNoIso"),
         quantity = cms.untracked.string("userFloat('idMediumNoIso')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idTightNoIso"),
+        tag = cms.untracked.string("IDTightNoIso"),
         quantity = cms.untracked.string("userFloat('idTightNoIso')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idVetoCuts"),
+        tag = cms.untracked.string("IDVetoCuts"),
         quantity = cms.untracked.string("userFloat('idVetoCuts')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idLooseCuts"),
+        tag = cms.untracked.string("IDLooseCuts"),
         quantity = cms.untracked.string("userFloat('idLooseCuts')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idMediumCuts"),
+        tag = cms.untracked.string("IDMediumCuts"),
         quantity = cms.untracked.string("userFloat('idMediumCuts')")
         ),
     cms.PSet(
-        tag = cms.untracked.string("idTightCuts"),
+        tag = cms.untracked.string("IDTightCuts"),
         quantity = cms.untracked.string("userFloat('idTightCuts')")
         ),
 

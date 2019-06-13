@@ -390,8 +390,7 @@ jetAlgoPuppi    = 'AK4PFPuppi'
 jetAlgoAK8      = 'AK8PFchs'
 jetAlgoAK8Puppi = 'AK8PFPuppi'
 
-#ak4Cut = 'pt > 20 && abs(eta) < 2.4'
-ak4Cut=''
+ak4Cut = 'pt > 20 && abs(eta) < 2.4'
 ak8Cut='pt > 170 && abs(eta) < 2.4'
 
 jetToolbox( process, 
@@ -831,6 +830,7 @@ from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 my_phoid_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V1_TrueVtx_cff' ]
 
 my_eid_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff',
+                   'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff',
                   'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff', 'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff','RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
 
 #Re-running electron smearing

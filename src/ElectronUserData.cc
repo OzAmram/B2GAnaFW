@@ -256,6 +256,12 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     auto scale_corr  = el.userFloat("ecalTrkEnergyPostCorr") / el.energy();
     auto scale_corr_up  = el.userFloat("energyScaleUp") / el.energy();
     auto scale_corr_down  = el.userFloat("energyScaleDown") / el.energy();
+    auto scale_corr_stat_up  = el.userFloat("energyScaleStatUp") / el.energy();
+    auto scale_corr_stat_down  = el.userFloat("energyScaleStatDown") / el.energy();
+    auto scale_corr_gain_up  = el.userFloat("energyScaleGainUp") / el.energy();
+    auto scale_corr_gain_down  = el.userFloat("energyScaleGainDown") / el.energy();
+    auto scale_corr_syst_up  = el.userFloat("energyScaleSystUp") / el.energy();
+    auto scale_corr_syst_down  = el.userFloat("energyScaleSystDown") / el.energy();
     auto scale_smear_down  = el.userFloat("energySigmaDown") / el.energy();
     auto scale_smear_up  = el.userFloat("energySigmaUp") / el.energy();
 
@@ -274,24 +280,18 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     bool hasMatchConv = ConversionTools::hasMatchedConversion(el, conversions, beamspot.position());
 
 
-    bool idVeto   = el.electronID("cutBasedElectronID-Fall17-94X-V1-veto");
-    bool idLoose   = el.electronID("cutBasedElectronID-Fall17-94X-V1-loose");
-    bool idMedium   = el.electronID("cutBasedElectronID-Fall17-94X-V1-medium");
-    bool idTight   = el.electronID("cutBasedElectronID-Fall17-94X-V1-tight");
+    bool idVeto   = el.electronID("cutBasedElectronID-Fall17-94X-V2-veto");
+    bool idLoose   = el.electronID("cutBasedElectronID-Fall17-94X-V2-loose");
+    bool idMedium   = el.electronID("cutBasedElectronID-Fall17-94X-V2-medium");
+    bool idTight   = el.electronID("cutBasedElectronID-Fall17-94X-V2-tight");
 
-    /* 8 cuts for electron ID are: 
-    full5x5_sigmaIetaIeta 
-    abs(dEtaInSeed)  	 		
-    abs(dPhiIn)  		
-    H/E  		
-    Rel. comb. PF iso with EA corr 
-    abs(1/E-1/p) 
-    expected missing inner hits 
-    pass conversion veto 
+    /* There are 10 cuts for electrons and iso is the 8th cut
+     * https://github.com/cms-sw/cmssw/blob/master/RecoEgamma/ElectronIdentification/python/Identification/cutBasedElectronID_tools.py#L726
+     * https://hypernews.cern.ch/HyperNews/CMS/get/egamma-elecid/140/1.html
 
-    So ID no iso would be 11110111 = 0xF7
+    So ID no iso would be 11 0111 1111 = 0x37F
     */
-    int IDnoIso = 0xF7;
+    int IDnoIso = 0x37F;
     
 
     int idVetoCuts   = el.userInt("cutBasedElectronID-Fall17-94X-V1-veto");
@@ -395,6 +395,12 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     el.addUserFloat("scaleCorr", scale_corr);
     el.addUserFloat("scaleCorrUp", scale_corr_up);
     el.addUserFloat("scaleCorrDown", scale_corr_down);
+    el.addUserFloat("scaleCorrStatUp", scale_corr_stat_up);
+    el.addUserFloat("scaleCorrStatDown", scale_corr_stat_down);
+    el.addUserFloat("scaleCorrGainUp", scale_corr_gain_up);
+    el.addUserFloat("scaleCorrGainDown", scale_corr_gain_down);
+    el.addUserFloat("scaleCorrSystUp", scale_corr_syst_up);
+    el.addUserFloat("scaleCorrSystDown", scale_corr_syst_down);
     el.addUserFloat("scaleSmearDown", scale_smear_down);
     el.addUserFloat("scaleSmearUp", scale_smear_up);
     el.addUserFloat("goodCharge", good_charge);
