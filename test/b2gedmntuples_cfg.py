@@ -4,7 +4,7 @@ header = """
 ###    The globalTag is automatically chosen according to the input 'DataProcessing' value. 
 ###    However it can be explictily specified to override the default option.
 ###    Remember that the value of 'DataProcessing' is not set by default. The user has the choice of
-###        'Data_94X', 'MC_Fall17MiniAOD' 
+###        'Data_102X', 'MC' 
 ###
 ### Examples: 
 ###
@@ -52,9 +52,7 @@ options.register('DataProcessing',
     opts.VarParsing.multiplicity.singleton,
     opts.VarParsing.varType.string,
     'Data processing types. Options are:\
-                   Data_94X and MC\
-                   Previous version pre-ReMiniAOD for comparison are\
-                   Data_94X_Nov17 and MC_Fall17MiniAODv1'
+                   Data_102X and MC'
     )
 
 ### Expert options, do not change.
@@ -113,25 +111,23 @@ options.setDefault('maxEvents', 100)
 options.parseArguments()
 
 if options.DataProcessing == "":
-  sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: Data_94X and MC.\n")
+  sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: Data_102X and MC.\n")
 
 
 #Recommended GT's https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmVAnalysisSummaryTable
 if options.globalTag != "": 
   print "!!!!WARNING: You have chosen globalTag as", options.globalTag, ". Please check if this corresponds to your dataset."
 else: 
-  if "Data_94X" in options.DataProcessing:
-    options.globalTag="94X_dataRun2_v11"
+  if "Data_102X" in options.DataProcessing:
+    options.globalTag="102X_dataRun2_v11"
   elif "MC"in options.DataProcessing:
-    options.globalTag="94X_mc2017_realistic_v17"
+    options.globalTag="102X_upgrade2018_realistic_v19"
   else:
     sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: \
-      'Data_94X', 'MC_Fall17MiniAODv2' \
-      'Data_94X_Nov17', 'MC_Fall17MiniAODv1' \
+      'Data_102X', 'MC_' \
       .\n")
 
-if "Data_94X" in options.DataProcessing  or  "MC" in options.DataProcessing: ### Use no HF met until a solution is found
-  options.useNoHFMET=True
+options.useNoHFMET=True
 
 
 
@@ -157,10 +153,7 @@ triggerResultsLabel 	 = "TriggerResults"
 triggerSummaryLabel 	 = "hltTriggerSummaryAOD"
 hltElectronFilterLabel = "hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"
 
-if "MC" in options.DataProcessing or "Data_94X" in options.DataProcessing:
-  metProcess = "PAT"
-elif "Nov17" in option.DataProcessing:
-  metProcess = "RECO"
+metProcess = "RECO"
 hltProcess = "HLT"
 
 doElectronEnergyCorr=True
@@ -203,8 +196,8 @@ process.load("Configuration.EventContent.EventContent_cff")
 process.load('Configuration.StandardSequences.GeometryDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.Services_cff')
-process.load("RecoEgamma/PhotonIdentification/PhotonIDValueMapProducer_cfi")
-process.load("RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi")
+#process.load("RecoEgamma.PhotonIdentification.PhotonIDValueMapProducer_cff")
+#process.load("RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi")
 #process.load('RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff')
 
 corrections = ['L1FastJet', 'L2Relative', 'L3Absolute']
@@ -212,10 +205,10 @@ if ("Data" in options.DataProcessing and options.forceResiduals): corrections.ex
 
 ### External JEC =====================================================================================================
 if options.usePrivateSQLite:
-  if "Data_94X" in options.DataProcessing:
-    jec_era="Fall17_17Nov2017BCDEF_V6_DATA"
+  if "Data" in options.DataProcessing:
+    jec_era="Autumn18_RunABCD_V8_DATA"
   elif "MC" in options.DataProcessing: ### to test relVal
-    jec_era="Fall17_17Nov2017_V6_MC"
+    jec_era = "Autumn18_V8_MC"
 
     # JEC
     process.load("CondCore.CondDB.CondDB_cfi")
@@ -273,9 +266,9 @@ if options.usePrivateSQLite:
 
 ### External JER =====================================================================================================
 if "Data" in options.DataProcessing:
-  jer_era = "Spring16_25nsV6_DATA"
+  jer_era = "Autumn18_RunABCD_V8_DATA"
 elif "MC" in options.DataProcessing:
-  jer_era = "Spring16_25nsV6_MC"
+  jer_era = "Autumn18_V8_MC"
 else: sys.exit("!!!!ERROR: Enter 'DataProcessing' period.\n")
 
 if options.usePrivateSQLiteForJER:
@@ -658,11 +651,6 @@ process.jetUserData = cms.EDProducer(
     resolutionsFile   = cms.string(jer_era+'_PtResolution_'+jetAlgo+'.txt'),
     scaleFactorsFile  = cms.string(jer_era+'_SF_'+jetAlgo+'.txt'),
     ### TTRIGGER ###
-    triggerResults = cms.InputTag(triggerResultsLabel,"",hltProcess),
-    triggerSummary = cms.InputTag(triggerSummaryLabel,"",hltProcess),
-    hltJetFilter       = cms.InputTag("hltPFHT"),
-    hltPath            = cms.string("HLT_PFHT800"),
-    hlt2reco_deltaRmax = cms.double(0.2),
     candSVTagInfos         = cms.string("pfInclusiveSecondaryVertexFinder"), 
     )
 
@@ -677,11 +665,6 @@ process.jetUserDataPuppi = cms.EDProducer(
     resolutionsFile   = cms.string(jer_era+'_PtResolution_'+jetAlgoPuppi+'.txt'),
     scaleFactorsFile  = cms.string(jer_era+'_SF_'+jetAlgoPuppi+'.txt'),
     ### TTRIGGER ###
-    triggerResults = cms.InputTag(triggerResultsLabel,"",hltProcess),
-    triggerSummary = cms.InputTag(triggerSummaryLabel,"",hltProcess),
-    hltJetFilter       = cms.InputTag("hltPFHT"),
-    hltPath            = cms.string("HLT_PFHT800"),
-    hlt2reco_deltaRmax = cms.double(0.2),
     candSVTagInfos         = cms.string("pfInclusiveSecondaryVertexFinder"), 
     )
 
@@ -697,11 +680,6 @@ process.jetUserDataAK8 = cms.EDProducer(
     resolutionsFile   = cms.string(jer_era+'_PtResolution_'+jetAlgoAK8+'.txt'),
     scaleFactorsFile  = cms.string(jer_era+'_SF_'+jetAlgoAK8+'.txt'),
     ### TTRIGGER ###
-    triggerResults = cms.InputTag(triggerResultsLabel,"",hltProcess),
-    triggerSummary = cms.InputTag(triggerSummaryLabel,"",hltProcess),
-    hltJetFilter       = cms.InputTag("hltAK8PFJetsTrimR0p1PT0p03"),
-    hltPath            = cms.string("HLT_AK8PFHT650_TrimR0p1PT0p03Mass50"),
-    hlt2reco_deltaRmax = cms.double(0.2), 
     candSVTagInfos         = cms.string("pfInclusiveSecondaryVertexFinder"), 
 )
 
@@ -773,10 +751,6 @@ process.electronUserData = cms.EDProducer(
     triggerSummary = cms.InputTag(triggerSummaryLabel,"",hltProcess),
     hltElectronFilter  = cms.InputTag(hltElectronFilterLabel),  ##trigger matching code to be fixed!
     # VID now are called directly from the ElectronID and added as userData in the entuples. Example below of the ones available for 2017 data:
-    #vidLooseLabel = cms.untracked.string("cutBasedElectronID-Fall17-94X-V1-loose"),
-    #vidMediumLabel = cms.untracked.string("cutBasedElectronID-Fall17-94X-V1-medium"),
-    #vidTightLabel = cms.untracked.string("cutBasedElectronID-Fall17-94X-V1-tight"),
-    #vidVetoLabel = cms.untracked.string("cutBasedElectronID-Fall17-94X-V1-veto"),
     #
     #vidLooseMVALabel = cms.untracked.string("mvaEleID-Fall17-iso-V1-wpLoose"),
     #vidMediumMVALabel = cms.untracked.string("mvaEleID-Fall17-iso-V1-wp90"),
@@ -834,8 +808,8 @@ my_eid_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElec
                   'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff', 'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff','RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
 
 #Re-running electron smearing
-
 from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
+
 
 #If energy smearing is off, this will apply the electronID producing a collection named calibratedPatElectrons
 setupEgammaPostRecoSeq(process,applyEnergyCorrections=doElectronEnergyCorr,
