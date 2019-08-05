@@ -80,12 +80,6 @@ options.register('forceResiduals',
     opts.VarParsing.varType.bool,
     'Whether to force residuals to be applied')
 
-options.register('removeResidualsFromMET',
-    False,
-    opts.VarParsing.multiplicity.singleton,
-    opts.VarParsing.varType.bool,
-    'Whether to remove residuals from T1 MET data')
-
 
 options.register('runCRAB',
     True,
@@ -127,7 +121,7 @@ else:
       'Data_102X', 'MC_' \
       .\n")
 
-options.useNoHFMET=True
+options.useNoHFMET=False
 
 
 
@@ -200,8 +194,6 @@ process.load('Configuration.StandardSequences.Services_cff')
 #process.load("RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi")
 #process.load('RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff')
 
-corrections = ['L1FastJet', 'L2Relative', 'L3Absolute']
-if ("Data" in options.DataProcessing and options.forceResiduals): corrections.extend(['L2L3Residual'])
 
 ### External JEC =====================================================================================================
 if options.usePrivateSQLite:
@@ -355,22 +347,11 @@ from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
 listBTagInfos = [
      'pfInclusiveSecondaryVertexFinderTagInfos',
      ]
-listBtagDiscriminatorsAK4 = [ 
-		'pfJetProbabilityBJetTags',
-		'pfCombinedInclusiveSecondaryVertexV2BJetTags',
-		'pfCombinedMVAV2BJetTags',
-		'pfCombinedCvsLJetTags',
-		'pfCombinedCvsBJetTags',
+listBtagDiscriminators = [ 
+        'pfDeepCSVJetTags:probb',
+        'pfDeepCSVJetTags:probbb',
 		]
-listBtagDiscriminatorsAK8 = [ 
-		'pfJetProbabilityBJetTags',
-		'pfCombinedInclusiveSecondaryVertexV2BJetTags',
-		'pfCombinedMVAV2BJetTags',
-		'pfCombinedCvsLJetTags',
-		'pfCombinedCvsBJetTags',
-		'pfBoostedDoubleSecondaryVertexAK8BJetTags',
-		'pfBoostedDoubleSecondaryVertexCA15BJetTags',
-		]
+
 
 runMC = ("MC" in options.DataProcessing)
 
@@ -393,8 +374,8 @@ jetToolbox( process,
 		runOnMC=runMC, 
 		updateCollection=jetAK4Label, 
 		JETCorrPayload=jetAlgo, 
-		addQGTagger=True,  
-		bTagDiscriminators=listBtagDiscriminatorsAK4, 
+		addQGTagger=False,  
+		bTagDiscriminators=listBtagDiscriminators, 
 		bTagInfos=listBTagInfos,
         Cut = ak4Cut) 
 
@@ -406,7 +387,7 @@ jetToolbox( process,
 		updateCollection=jetAK4LabelPuppi,
 		JETCorrPayload='AK4PFPuppi', 
 		JETCorrLevels=[ 'L2Relative', 'L3Absolute'], 
-		bTagDiscriminators=listBtagDiscriminatorsAK4, 
+		bTagDiscriminators=listBtagDiscriminators, 
 		bTagInfos=listBTagInfos,
         Cut=ak4Cut)  
 
@@ -426,7 +407,7 @@ jetToolbox( process,
 		addSoftDrop=True, 
 		addNsub=True, 
 		bTagInfos=listBTagInfos, 
-		bTagDiscriminators=listBtagDiscriminatorsAK8, 
+		bTagDiscriminators=listBtagDiscriminators, 
 		Cut=ak8Cut, 
 		addNsubSubjets=True, 
 		subjetMaxTau=4 )
@@ -444,7 +425,7 @@ jetToolbox( process,
 		addSoftDrop=True, 
 		addNsub=True, 
 		bTagInfos=listBTagInfos, 
-		bTagDiscriminators=listBtagDiscriminatorsAK8, 
+		bTagDiscriminators=listBtagDiscriminators, 
 		Cut=ak8Cut, 
 		addNsubSubjets=True, 
 		subjetMaxTau=4 )
@@ -513,18 +494,18 @@ runMetCorAndUncFromMiniAOD(process,
   )
 
 
-from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
-
-if options.useNoHFMET:
-  runMetCorAndUncFromMiniAOD (
-    process,
-    isData = True, # false for MC
-    fixEE2017 = True,
-    postfix = "NoHF"
-#    postx = "ModiedMET"
-    )
-  jLabelNoHF = 'patJetsNoHF'
-
+#from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+#
+#if options.useNoHFMET:
+#  runMetCorAndUncFromMiniAOD (
+#    process,
+#    isData = True, # false for MC
+#    fixEE2017 = True,
+#    postfix = "NoHF"
+##    postx = "ModiedMET"
+#    )
+#  jLabelNoHF = 'patJetsNoHF'
+#
 #	runMetCorAndUncFromMiniAOD(process,#
 #		  isData=("Data" in options.DataProcessing),#
 #		  pfCandColl=cms.InputTag("noHFCands"),
@@ -537,25 +518,6 @@ if options.useNoHFMET:
 ### the lines below remove the L2L3 residual corrections when processing data
 ### -------------------------------------------------------------------
 
-if (options.removeResidualsFromMET):
-  #Take new pat jets as input of the ntuples
-  #process.patJetCorrFactors.levels = corrections 
-  if options.useNoHFMET:
-    process.patJetCorrFactorsNoHF.levels = corrections 
-    process.patPFMetT1T2CorrNoHF.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.patPFMetT1T2SmearCorrNoHF.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.patPFMetT2CorrNoHF.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.patPFMetT2SmearCorrNoHF.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.shiftedPatJetEnDownNoHF.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
-    process.shiftedPatJetEnUpNoHF.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
-  else: 
-    process.patPFMetT1T2Corr.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.patPFMetT1T2SmearCorr.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.patPFMetT2Corr.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.patPFMetT2SmearCorr.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.shiftedPatJetEnDown.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
-    process.shiftedPatJetEnUp.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
-### ------------------------------------------------------------------
 
 ### -------------------------------------------------------------------
 ### Latest Run II MET Filter recommendations
@@ -612,14 +574,14 @@ process.skimmedPatPuppiMET = cms.EDFilter(
 
 
 ##### THERE IS NO slimmedMETsNoHF in miniAODv2
-if( options.useNoHFMET ):
-
-  process.skimmedPatMETNoHF = cms.EDFilter(
-    "PATMETSelector",
-    src = cms.InputTag(metNoHFLabel, "", metProcess),
-    cut = cms.string("")
-    )
-
+#if( options.useNoHFMET ):
+#
+#  process.skimmedPatMETNoHF = cms.EDFilter(
+#    "PATMETSelector",
+#    src = cms.InputTag(metNoHFLabel, "", metProcess),
+#    cut = cms.string("")
+#    )
+#
 
 process.eventUserData = cms.EDProducer(
     'EventUserData',
@@ -653,22 +615,6 @@ process.jetUserData = cms.EDProducer(
     ### TTRIGGER ###
     candSVTagInfos         = cms.string("pfInclusiveSecondaryVertexFinder"), 
     )
-
-process.jetUserDataPuppi = cms.EDProducer(
-    'JetUserData',
-    jetLabel          = cms.InputTag(jLabelPuppi),
-    rho               = cms.InputTag(rhoLabel),
-    coneSize          = cms.double(0.4),
-    getJERFromTxt     = cms.bool(False),
-    jetCorrLabel      = cms.string(jetAlgoPuppi),
-    jerLabel          = cms.string(jetAlgoPuppi),
-    resolutionsFile   = cms.string(jer_era+'_PtResolution_'+jetAlgoPuppi+'.txt'),
-    scaleFactorsFile  = cms.string(jer_era+'_SF_'+jetAlgoPuppi+'.txt'),
-    ### TTRIGGER ###
-    candSVTagInfos         = cms.string("pfInclusiveSecondaryVertexFinder"), 
-    )
-
-
 process.jetUserDataAK8 = cms.EDProducer(
     'JetUserData',
     jetLabel          = cms.InputTag(jLabelAK8),
@@ -682,6 +628,22 @@ process.jetUserDataAK8 = cms.EDProducer(
     ### TTRIGGER ###
     candSVTagInfos         = cms.string("pfInclusiveSecondaryVertexFinder"), 
 )
+#
+#process.jetUserDataPuppi = cms.EDProducer(
+#    'JetUserData',
+#    jetLabel          = cms.InputTag(jLabelPuppi),
+#    rho               = cms.InputTag(rhoLabel),
+#    coneSize          = cms.double(0.4),
+#    getJERFromTxt     = cms.bool(False),
+#    jetCorrLabel      = cms.string(jetAlgoPuppi),
+#    jerLabel          = cms.string(jetAlgoPuppi),
+#    resolutionsFile   = cms.string(jer_era+'_PtResolution_'+jetAlgoPuppi+'.txt'),
+#    scaleFactorsFile  = cms.string(jer_era+'_SF_'+jetAlgoPuppi+'.txt'),
+#    ### TTRIGGER ###
+#    candSVTagInfos         = cms.string("pfInclusiveSecondaryVertexFinder"), 
+#    )
+#
+#
 
 
 process.photonJetsUserData = cms.EDProducer(
@@ -695,8 +657,34 @@ process.photonJetsUserData = cms.EDProducer(
     eeReducedRecHitCollection = cms.InputTag("reducedEgamma:reducedEERecHits")
 
     )
+#
+#
+#
+#
+#
+#process.jetUserDataAK8Puppi = cms.EDProducer(
+#    'JetUserData',
+#    jetLabel          = cms.InputTag( jLabelAK8Puppi ),
+#    rho               = cms.InputTag(rhoLabel),
+#    coneSize          = cms.double(0.8),
+#    getJERFromTxt     = cms.bool(False),
+#    jetCorrLabel      = cms.string(jetAlgoAK8Puppi),
+#    jerLabel          = cms.string(jetAlgoAK8Puppi),
+#    resolutionsFile   = cms.string(jer_era+'_PtResolution_'+jetAlgoAK8Puppi+'.txt'),
+#    scaleFactorsFile  = cms.string(jer_era+'_SF_'+jetAlgoAK8Puppi+'.txt'),
+#    ### TTRIGGER ###
+#    triggerResults = cms.InputTag(triggerResultsLabel,"",hltProcess),
+#    triggerSummary = cms.InputTag(triggerSummaryLabel,"",hltProcess),
+#    hltJetFilter       = cms.InputTag("hltAK8PFJetsTrimR0p1PT0p03"),
+#    hltPath            = cms.string("HLT_AK8PFHT650_TrimR0p1PT0p03Mass50"),
+#    hlt2reco_deltaRmax = cms.double(0.2), 
+#    candSVTagInfos         = cms.string("pfInclusiveSecondaryVertexFinder"), 
+#    )
 
-
+# FastSim JEC is not available for Puppi jets, use CHS instead
+if "FastSim" in options.DataProcessing:
+  process.jetUserDataPuppi.jetCorrLabel    = jetAlgo
+  process.jetUserDataAK8Puppi.jetCorrLabel = jetAlgoAK8
 
 process.boostedJetUserDataAK8 = cms.EDProducer(
     'BoostedJetToolboxUserData',
@@ -705,39 +693,13 @@ process.boostedJetUserDataAK8 = cms.EDProducer(
     jetWithSubjetLabel = cms.InputTag('selectedPatJetsAK8PFCHSSoftDropPacked'),
     distMax = cms.double(0.8)
 )
-
-
-process.jetUserDataAK8Puppi = cms.EDProducer(
-    'JetUserData',
-    jetLabel          = cms.InputTag( jLabelAK8Puppi ),
-    rho               = cms.InputTag(rhoLabel),
-    coneSize          = cms.double(0.8),
-    getJERFromTxt     = cms.bool(False),
-    jetCorrLabel      = cms.string(jetAlgoAK8Puppi),
-    jerLabel          = cms.string(jetAlgoAK8Puppi),
-    resolutionsFile   = cms.string(jer_era+'_PtResolution_'+jetAlgoAK8Puppi+'.txt'),
-    scaleFactorsFile  = cms.string(jer_era+'_SF_'+jetAlgoAK8Puppi+'.txt'),
-    ### TTRIGGER ###
-    triggerResults = cms.InputTag(triggerResultsLabel,"",hltProcess),
-    triggerSummary = cms.InputTag(triggerSummaryLabel,"",hltProcess),
-    hltJetFilter       = cms.InputTag("hltAK8PFJetsTrimR0p1PT0p03"),
-    hltPath            = cms.string("HLT_AK8PFHT650_TrimR0p1PT0p03Mass50"),
-    hlt2reco_deltaRmax = cms.double(0.2), 
-    candSVTagInfos         = cms.string("pfInclusiveSecondaryVertexFinder"), 
-    )
-
-# FastSim JEC is not available for Puppi jets, use CHS instead
-if "FastSim" in options.DataProcessing:
-  process.jetUserDataPuppi.jetCorrLabel    = jetAlgo
-  process.jetUserDataAK8Puppi.jetCorrLabel = jetAlgoAK8
-
-process.boostedJetUserDataAK8Puppi = cms.EDProducer(
-    'BoostedJetToolboxUserData',
-    jetLabel  = cms.InputTag('jetUserDataAK8Puppi'),
-    puppiSDjetLabel = cms.InputTag('packedPatJetsAK8PFPuppiSoftDrop'),
-    jetWithSubjetLabel = cms.InputTag('selectedPatJetsAK8PFPuppiSoftDropPacked'),
-    distMax = cms.double(0.8)
-    )
+#process.boostedJetUserDataAK8Puppi = cms.EDProducer(
+#    'BoostedJetToolboxUserData',
+#    jetLabel  = cms.InputTag('jetUserDataAK8Puppi'),
+#    puppiSDjetLabel = cms.InputTag('packedPatJetsAK8PFPuppiSoftDrop'),
+#    jetWithSubjetLabel = cms.InputTag('selectedPatJetsAK8PFPuppiSoftDropPacked'),
+#    distMax = cms.double(0.8)
+#    )
 
 process.electronUserData = cms.EDProducer(
     'ElectronUserData',

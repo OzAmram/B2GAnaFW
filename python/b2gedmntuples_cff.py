@@ -85,10 +85,10 @@ puppimetFull = metFull.clone(
   )
 
 ### No HF MET added as default for the time being
-metNoHF = metFull.clone(
-  src = cms.InputTag("skimmedPatMETNoHF"),
-  prefix = cms.untracked.string("metNoHF"),
-  )
+#metNoHF = metFull.clone(
+#  src = cms.InputTag("skimmedPatMETNoHF"),
+#  prefix = cms.untracked.string("metNoHF"),
+#  )
 
 ### muon variables
 muonVars = (
@@ -311,20 +311,16 @@ muonVars = (
 jetVars = (
     ### B-TAGGING
     cms.PSet(
-      tag = cms.untracked.string("CSVv2"),
-      quantity = cms.untracked.string("bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')")
+      tag = cms.untracked.string("DeepCSV"),
+      quantity = cms.untracked.string("bDiscriminator('pfDeepCSVJetTags:probb') + bDiscriminator('pfDeepCSVJetTags:probbb')")
       ),
     cms.PSet(
-      tag = cms.untracked.string("CMVAv2"),
-      quantity = cms.untracked.string("bDiscriminator('pfCombinedMVAV2BJetTags')")
+      tag = cms.untracked.string("DeepCSVb"),
+      quantity = cms.untracked.string("bDiscriminator('pfDeepCSVJetTags:probb')")
       ),
     cms.PSet(
-      tag = cms.untracked.string("CvsL"),
-      quantity = cms.untracked.string("bDiscriminator('pfCombinedCvsLJetTags')")
-      ),
-    cms.PSet(
-      tag = cms.untracked.string("CvsB"),
-      quantity = cms.untracked.string("bDiscriminator('pfCombinedCvsBJetTags')")
+      tag = cms.untracked.string("DeepCSVbb"),
+      quantity = cms.untracked.string("bDiscriminator('pfDeepCSVJetTags:probbb')")
       ),
     #cms.PSet(
     #  tag = cms.untracked.string("CMVA"),
@@ -560,36 +556,36 @@ jetVars = (
     )
 
 #### FOR SYSTEMATICS
-jetVarsForSys = (
-    cms.PSet(
-        tag = cms.untracked.string("jecUncertainty"),
-        quantity = cms.untracked.string("userFloat('jecUncertainty')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("PtResolution"),
-        quantity = cms.untracked.string("userFloat('PtResolution')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("JERSF"),
-        quantity = cms.untracked.string("userFloat('JERSF')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("JERSFUp"),
-        quantity = cms.untracked.string("userFloat('JERSFUp')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("JERSFDown"),
-        quantity = cms.untracked.string("userFloat('JERSFDown')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("SmearedPt"),
-        quantity = cms.untracked.string("userFloat('SmearedPt')")
-        ),
+#jetVarsForSys = (
+    #cms.PSet(
+    #    tag = cms.untracked.string("jecUncertainty"),
+    #    quantity = cms.untracked.string("userFloat('jecUncertainty')")
+    #    ),
+    #cms.PSet(
+    #    tag = cms.untracked.string("PtResolution"),
+    #    quantity = cms.untracked.string("userFloat('PtResolution')")
+    #    ),
+    #cms.PSet(
+    #    tag = cms.untracked.string("JERSF"),
+    #    quantity = cms.untracked.string("userFloat('JERSF')")
+    #    ),
+    #cms.PSet(
+    #    tag = cms.untracked.string("JERSFUp"),
+    #    quantity = cms.untracked.string("userFloat('JERSFUp')")
+    #    ),
+    #cms.PSet(
+    #    tag = cms.untracked.string("JERSFDown"),
+    #    quantity = cms.untracked.string("userFloat('JERSFDown')")
+    #    ),
+    #cms.PSet(
+    #    tag = cms.untracked.string("SmearedPt"),
+    #    quantity = cms.untracked.string("userFloat('SmearedPt')")
+    #    ),
     #Calc cms.PSet(
     #Calc     tag = cms.untracked.string("SmearedE"),
     #Calc     quantity = cms.untracked.string("userFloat('SmearedE')")
     #Calc     ),
-    )
+#    )
 
 jetVarsJEC = (
     ### FOR JEC
@@ -611,10 +607,17 @@ jetVarsJEC = (
         ),
 )
 
+jLabel		= 'selectedPatJetsAK4PFCHS'
+jLabelAK8	= 'selectedPatJetsAK8PFCHS'
+
 jetKeys = cms.EDProducer(
-    "JetKeyProducer",
-    jetLabel = cms.InputTag("jetUserData")
-    )
+        "JetKeyProducer",
+        jetLabel = cms.InputTag("jetUserData")
+        )
+#jetKeys = cms.EDProducer(
+#    "JetKeyProducer",
+#    jetLabel = cms.InputTag(jLabel)
+#    )
 electronKeys = cms.EDProducer(
     "SourceKeyProducer",
     srcLabel = cms.InputTag("electronUserData")
@@ -1297,54 +1300,54 @@ photonjets =  (
 )
 
 
-qglVars = (
-    ### B-TAGGING
-    cms.PSet(
-      tag = cms.untracked.string("QGL"),
-      #quantity = cms.untracked.string("userFloat('QGL')")
-      quantity = cms.untracked.string("userFloat('QGTaggerAK4PFCHS:qgLikelihood')")
-      ),
-)
+#qglVars = (
+#    ### B-TAGGING
+#    cms.PSet(
+#      tag = cms.untracked.string("QGL"),
+#      #quantity = cms.untracked.string("userFloat('QGL')")
+#      quantity = cms.untracked.string("userFloat('QGTaggerAK4PFCHS:qgLikelihood')")
+#      ),
+#)
 
 ###jets
 jetsAK4CHS = copy.deepcopy(basic)
 jetsAK4CHS.variables += jetVars
-jetsAK4CHS.variables += qglVars
-jetsAK4CHS.variables += jetVarsForSys
+#jetsAK4CHS.variables += qglVars
+#jetsAK4CHS.variables += jetVarsForSys
 jetsAK4CHS.prefix = cms.untracked.string("jetAK4CHS")
-jetsAK4CHS.src = cms.InputTag("jetUserData")
+jetsAK4CHS.src = cms.InputTag('jetUserData')
 jetKeysAK4CHS = copy.deepcopy( jetKeys )
-jetKeysAK4CHS.jetLabel = cms.InputTag("jetUserData")
-
-
-###jets with Puppi
-jetsAK4Puppi = copy.deepcopy(basic)
-jetsAK4Puppi.variables += jetVars
-jetsAK4Puppi.variables += jetVarsForSys
-jetsAK4Puppi.prefix = cms.untracked.string("jetAK4Puppi")
-jetsAK4Puppi.src = cms.InputTag("jetUserDataPuppi")
-jetKeysAK4Puppi = copy.deepcopy( jetKeys )
-jetKeysAK4Puppi.jetLabel = cms.InputTag("jetUserDataPuppi")
+jetKeysAK4CHS.jetLabel = cms.InputTag('jetUserData')
 
 ###AK8 jets with CHS
 jetsAK8CHS = copy.deepcopy(basic)
 jetsAK8CHS.variables += jetVars
-jetsAK8CHS.variables += jetVarsForSys
+#jetsAK8CHS.variables += jetVarsForSys
 jetsAK8CHS.variables += jetToolboxAK8Vars
-jetsAK8CHS.variables += photonjets
+#jetsAK8CHS.variables += photonjets
 jetsAK8CHS.prefix = cms.untracked.string("jetAK8CHS")
 jetsAK8CHS.src = cms.InputTag("boostedJetUserDataAK8")
 jetKeysAK8CHS = copy.deepcopy( jetKeys )
 jetKeysAK8CHS.jetLabel = cms.InputTag("boostedJetUserDataAK8")
 
+###jets with Puppi
+#jetsAK4Puppi = copy.deepcopy(basic)
+#jetsAK4Puppi.variables += jetVars
+##jetsAK4Puppi.variables += jetVarsForSys
+#jetsAK4Puppi.prefix = cms.untracked.string("jetAK4Puppi")
+#jetsAK4Puppi.src = cms.InputTag("jetUserDataPuppi")
+#jetKeysAK4Puppi = copy.deepcopy( jetKeys )
+#jetKeysAK4Puppi.jetLabel = cms.InputTag("jetUserDataPuppi")
+
+
 ### AK8 jets with Puppi
-jetsAK8Puppi = copy.deepcopy(basic)
-jetsAK8Puppi.variables += jetVars
-jetsAK8Puppi.variables += jetVarsForSys
-jetsAK8Puppi.variables += jetToolboxAK8PuppiVars 
-jetsAK8Puppi.prefix = 'jetAK8Puppi'
-jetsAK8Puppi.src = cms.InputTag( 'boostedJetUserDataAK8Puppi' )
-jetKeysAK8Puppi = jetKeysAK8CHS.clone( jetLabel = 'boostedJetUserDataAK8Puppi' )
+#jetsAK8Puppi = copy.deepcopy(basic)
+#jetsAK8Puppi.variables += jetVars
+##jetsAK8Puppi.variables += jetVarsForSys
+#jetsAK8Puppi.variables += jetToolboxAK8PuppiVars 
+#jetsAK8Puppi.prefix = 'jetAK8Puppi'
+#jetsAK8Puppi.src = cms.InputTag( 'boostedJetUserDataAK8Puppi' )
+#jetKeysAK8Puppi = jetKeysAK8CHS.clone( jetLabel = 'boostedJetUserDataAK8Puppi' )
 
 
 ###subjetsAK8 with CHS		
