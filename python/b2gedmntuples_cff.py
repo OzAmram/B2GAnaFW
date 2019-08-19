@@ -85,10 +85,10 @@ puppimetFull = metFull.clone(
   )
 
 ### No HF MET added as default for the time being
-metNoHF = metFull.clone(
-  src = cms.InputTag("skimmedPatMETNoHF"),
-  prefix = cms.untracked.string("metNoHF"),
-  )
+#metNoHF = metFull.clone(
+#  src = cms.InputTag("skimmedPatMETNoHF"),
+#  prefix = cms.untracked.string("metNoHF"),
+#  )
 
 ### muon variables
 muonVars = (
@@ -315,16 +315,16 @@ jetVars = (
       quantity = cms.untracked.string("bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')")
       ),
     cms.PSet(
-      tag = cms.untracked.string("CMVAv2"),
-      quantity = cms.untracked.string("bDiscriminator('pfCombinedMVAV2BJetTags')")
+      tag = cms.untracked.string("DeepCSV"),
+      quantity = cms.untracked.string("bDiscriminator('pfDeepCSVJetTags:probb') + bDiscriminator('pfDeepCSVJetTags:probbb')")
       ),
     cms.PSet(
-      tag = cms.untracked.string("CvsL"),
-      quantity = cms.untracked.string("bDiscriminator('pfCombinedCvsLJetTags')")
+      tag = cms.untracked.string("DeepCSVb"),
+      quantity = cms.untracked.string("bDiscriminator('pfDeepCSVJetTags:probb')")
       ),
     cms.PSet(
-      tag = cms.untracked.string("CvsB"),
-      quantity = cms.untracked.string("bDiscriminator('pfCombinedCvsBJetTags')")
+      tag = cms.untracked.string("DeepCSVbb"),
+      quantity = cms.untracked.string("bDiscriminator('pfDeepCSVJetTags:probbb')")
       ),
     #cms.PSet(
     #  tag = cms.untracked.string("CMVA"),

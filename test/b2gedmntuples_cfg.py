@@ -131,7 +131,7 @@ else:
       .\n")
 
 if "Data_94X" in options.DataProcessing  or  "MC" in options.DataProcessing: ### Use no HF met until a solution is found
-  options.useNoHFMET=True
+  options.useNoHFMET=False
 
 
 
@@ -273,9 +273,9 @@ if options.usePrivateSQLite:
 
 ### External JER =====================================================================================================
 if "Data" in options.DataProcessing:
-  jer_era = "Spring16_25nsV6_DATA"
+  jer_era = "Fall17_17Nov2017BCDEF_V6_DATA"
 elif "MC" in options.DataProcessing:
-  jer_era = "Spring16_25nsV6_MC"
+  jer_era = "Fall17_17Nov2017_V6_MC"
 else: sys.exit("!!!!ERROR: Enter 'DataProcessing' period.\n")
 
 if options.usePrivateSQLiteForJER:
@@ -368,6 +368,9 @@ listBtagDiscriminatorsAK4 = [
 		'pfCombinedMVAV2BJetTags',
 		'pfCombinedCvsLJetTags',
 		'pfCombinedCvsBJetTags',
+        'pfDeepCSVJetTags:probb',
+        'pfDeepCSVJetTags:probbb'
+
 		]
 listBtagDiscriminatorsAK8 = [ 
 		'pfJetProbabilityBJetTags',
