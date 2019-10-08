@@ -606,8 +606,6 @@ process.skimmedPatElectrons = cms.EDFilter(
     cut = cms.string("pt > 15.0 && abs(eta) < 2.5")
     )
 
-#process.skimmedPatElectrons.cut = cms.string("pt > 10 && abs(eta) < 2.5")
-
 process.skimmedPatMET = cms.EDFilter(
     "PATMETSelector",
     src = cms.InputTag(metLabel),
