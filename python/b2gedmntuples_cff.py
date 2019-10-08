@@ -325,6 +325,20 @@ jetVars = (
       tag = cms.untracked.string("CvsB"),
       quantity = cms.untracked.string("bDiscriminator('pfCombinedCvsBJetTags')")
       ),
+
+    cms.PSet(
+        tag = cms.untracked.string("DeepCSV"),
+        quantity = cms.untracked.string("bDiscriminator('pfDeepCSVJetTags:probb') + bDiscriminator('pfDeepCSVJetTags:probbb')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("DeepCSVb"),
+        quantity = cms.untracked.string("bDiscriminator('pfDeepCSVJetTags:probb')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("DeepCSVbb"),
+        quantity = cms.untracked.string("bDiscriminator('pfDeepCSVJetTags:probbb')")
+        ),
+
     #cms.PSet(
     #  tag = cms.untracked.string("CMVA"),
     #  quantity = cms.untracked.string("bDiscriminator('pfCombinedMVAV2BJetTags')")
@@ -1006,6 +1020,30 @@ electronVars = (
       quantity = cms.untracked.string("userFloat('scaleCorrDown')")
       ),
     cms.PSet(
+      tag = cms.untracked.string("ScaleCorrGainUp"),
+      quantity = cms.untracked.string("userFloat('scaleCorrGainUp')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrGainDown"),
+      quantity = cms.untracked.string("userFloat('scaleCorrGainDown')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrStatUp"),
+      quantity = cms.untracked.string("userFloat('scaleCorrStatUp')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrStatDown"),
+      quantity = cms.untracked.string("userFloat('scaleCorrStatDown')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrSystUp"),
+      quantity = cms.untracked.string("userFloat('scaleCorrSystUp')")
+      ),
+    cms.PSet(
+      tag = cms.untracked.string("ScaleCorrSystDown"),
+      quantity = cms.untracked.string("userFloat('scaleCorrSystDown')")
+      ),
+    cms.PSet(
       tag = cms.untracked.string("ScaleSmearDown"),
       quantity = cms.untracked.string("userFloat('scaleSmearDown')")
       ),
@@ -1060,6 +1098,39 @@ electronVars = (
         ),
     # IDs
     cms.PSet(
+        tag = cms.untracked.string("idVeto"),
+        quantity = cms.untracked.string("userFloat('idVeto')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idLoose"),
+        quantity = cms.untracked.string("userFloat('idLoose')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idMedium"),
+        quantity = cms.untracked.string("userFloat('idMedium')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idTight"),
+        quantity = cms.untracked.string("userFloat('idTight')")
+        ),
+    # IDs sans iso
+    cms.PSet(
+        tag = cms.untracked.string("idVetoNoIso"),
+        quantity = cms.untracked.string("userFloat('idVetoNoIso')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idLooseNoIso"),
+        quantity = cms.untracked.string("userFloat('idLooseNoIso')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idMediumNoIso"),
+        quantity = cms.untracked.string("userFloat('idMediumNoIso')")
+        ),
+    cms.PSet(
+        tag = cms.untracked.string("idTightNoIso"),
+        quantity = cms.untracked.string("userFloat('idTightNoIso')")
+        ),
+    cms.PSet(
         tag = cms.untracked.string("vidVeto"),
         quantity = cms.untracked.string("userFloat('vidVeto')")
         ),
@@ -1099,22 +1170,6 @@ electronVars = (
     cms.PSet(
         tag = cms.untracked.string("vidHEEPnoiso"),
         quantity = cms.untracked.string("userFloat('vidHEEPnoiso')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidMvaGPvalue"),
-        quantity = cms.untracked.string("userFloat('vidMvaGPvalue')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidMvaGPcateg"),
-        quantity = cms.untracked.string("userInt('vidMvaGPcateg')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidMvaHZZvalue"),
-        quantity = cms.untracked.string("userFloat('vidMvaHZZvalue')")
-        ),
-    cms.PSet(
-        tag = cms.untracked.string("vidMvaHZZcateg"),
-        quantity = cms.untracked.string("userInt('vidMvaHZZcateg')")
         ),
     )
 
