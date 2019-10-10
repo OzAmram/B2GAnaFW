@@ -121,9 +121,9 @@ if options.globalTag != "":
   print "!!!!WARNING: You have chosen globalTag as", options.globalTag, ". Please check if this corresponds to your dataset."
 else: 
   if "Data_94X" in options.DataProcessing:
-    options.globalTag="94X_dataRun2_v11"
+    options.globalTag="94X_dataRun2_v10"
   elif "MC"in options.DataProcessing:
-    options.globalTag="94X_mc2017_realistic_v17"
+    options.globalTag="94X_mcRun2_asymptotic_v3"
   else:
     sys.exit("!!!!ERROR: Enter 'DataProcessing' period. Options are: \
       'Data_94X', 'MC_Fall17MiniAODv2' \
@@ -157,10 +157,7 @@ triggerResultsLabel 	 = "TriggerResults"
 triggerSummaryLabel 	 = "hltTriggerSummaryAOD"
 hltElectronFilterLabel = "hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"
 
-if "MC" in options.DataProcessing or "Data_94X" in options.DataProcessing:
-  metProcess = "PAT"
-elif "Nov17" in option.DataProcessing:
-  metProcess = "RECO"
+metProcess = "RECO"
 hltProcess = "HLT"
 
 doElectronEnergyCorr=True
@@ -213,9 +210,9 @@ if ("Data" in options.DataProcessing and options.forceResiduals): corrections.ex
 ### External JEC =====================================================================================================
 if options.usePrivateSQLite:
   if "Data_94X" in options.DataProcessing:
-    jec_era="Fall17_17Nov2017BCDEF_V6_DATA"
+    jec_era="Summer16_07Aug2017All_V11_DATA"
   elif "MC" in options.DataProcessing: ### to test relVal
-    jec_era="Fall17_17Nov2017_V6_MC"
+    jec_era="Summer16_07Aug2017_V11_MC"
 
     # JEC
     process.load("CondCore.CondDB.CondDB_cfi")
@@ -528,8 +525,8 @@ from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMet
 if options.useNoHFMET:
   runMetCorAndUncFromMiniAOD (
     process,
-    isData = True, # false for MC
-    fixEE2017 = True,
+    isData = ("Data" in options.DataProcessing), # false for MC
+    fixEE2017 = False, 
     postfix = "NoHF"
 #    postx = "ModiedMET"
     )
