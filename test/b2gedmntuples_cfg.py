@@ -158,9 +158,9 @@ triggerResultsLabel 	 = "TriggerResults"
 triggerSummaryLabel 	 = "hltTriggerSummaryAOD"
 hltElectronFilterLabel = "hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"
 
-if "MC" in options.DataProcessing or "Data_94X" in options.DataProcessing:
+if "MC" in options.DataProcessing:
   metProcess = "PAT"
-elif "Nov17" in option.DataProcessing:
+else:
   metProcess = "RECO"
 hltProcess = "HLT"
 
