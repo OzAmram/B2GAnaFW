@@ -150,7 +150,8 @@ phoLabel          = 'calibratedPatPhotons'
 pvLabel           = 'offlineSlimmedPrimaryVertices'
 convLabel         = 'reducedEgamma:reducedConversions'
 particleFlowLabel = 'packedPFCandidates'    
-metLabel 	        = 'slimmedMETs'
+metLabel 	      = 'slimmedMETs'
+metLabelCorr 	  = 'slimmedMETsModifiedMET'
 puppimetLabel 	  = 'slimmedMETsPuppi'
 metNoHFLabel 	    = 'slimmedMETsNoHF'
 triggerResultsLabel 	 = "TriggerResults"
@@ -273,9 +274,9 @@ if options.usePrivateSQLite:
 
 ### External JER =====================================================================================================
 if "Data" in options.DataProcessing:
-  jer_era = "Fall17_17Nov2017BCDEF_V6_DATA"
+  jer_era = "Fall17_17Nov2017BCDEF_V32_DATA"
 elif "MC" in options.DataProcessing:
-  jer_era = "Fall17_17Nov2017_V6_MC"
+  jer_era = "Fall17_17Nov2017_V32_MC"
 else: sys.exit("!!!!ERROR: Enter 'DataProcessing' period.\n")
 
 if options.usePrivateSQLiteForJER:
@@ -510,8 +511,19 @@ if options.useNoHFMET:
 from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
 #For a full met computation, remove the pfCandColl input
+
 runMetCorAndUncFromMiniAOD(process,
                            isData=("Data" in options.DataProcessing),
+
+        )
+
+
+runMetCorAndUncFromMiniAOD(process,
+                           isData=("Data" in options.DataProcessing),
+                                   fixEE2017 = True,
+                                   fixEE2017Params = {'userawPt': True, 'ptThreshold':50.0, 'minEtaThreshold':2.65, 'maxEtaThreshold': 3.139} ,
+                                   postfix = "ModifiedMET"
+
 		)
 
 from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
@@ -609,6 +621,13 @@ process.skimmedPatElectrons = cms.EDFilter(
 process.skimmedPatMET = cms.EDFilter(
     "PATMETSelector",
     src = cms.InputTag(metLabel),
+    cut = cms.string("")
+    )
+
+
+process.skimmedPatMETCorr = cms.EDFilter(
+    "PATMETSelector",
+    src = cms.InputTag(metLabelCorr),
     cut = cms.string("")
     )
 
@@ -975,6 +994,7 @@ process.edmNtuplesOut = cms.OutputModule(
     #"keep *_eventShape*_*_*",
     #"keep *_*_*centrality*_*",
     "keep *_metFull_*_*",
+    "keep *_metCorrFull_*_*",
     "keep *_puppimetFull_*_*",
     "keep *_metNoHF_*_*",
     "keep *_METUserData*_trigger*_*",

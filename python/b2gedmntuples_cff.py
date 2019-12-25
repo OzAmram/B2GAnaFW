@@ -79,6 +79,12 @@ metFull =  cms.EDProducer(
         ),
     )
 
+
+metCorrFull = metFull.clone(
+  src = cms.InputTag("skimmedPatMETCorr"),
+  prefix = cms.untracked.string("metCorrFull"),
+  )
+
 puppimetFull = metFull.clone(
   src = cms.InputTag("skimmedPatPuppiMET"),
   prefix = cms.untracked.string("puppimetFull"),
